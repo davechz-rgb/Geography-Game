@@ -1,197 +1,821 @@
-<!DOCTYPE html>
-<html lang="en">
+<!doctype html>
+<html lang="es">
 <head>
-<meta charset="UTF-8">
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"/>
 <title>Geography Trainer</title>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <style>
-body{
-  margin:0;font-family:system-ui;
-  background:linear-gradient(180deg,#0b1220,#0e1a33);
-  color:#fff
+:root{
+  --bg0:#070b12; --bg1:#0b1220; --bg2:#0e1a33;
+  --card:rgba(255,255,255,.085);
+  --stroke:rgba(255,255,255,.12);
+  --text:rgba(255,255,255,.95);
+  --muted:rgba(255,255,255,.7);
+  --accent:#67e8f9; --accent2:#a78bfa;
+  --good:#22c55e; --bad:#ef4444; --warn:#fbbf24;
 }
-#app{max-width:520px;margin:auto;padding:14px}
-.hidden{display:none}
-button{cursor:pointer}
+*{box-sizing:border-box}
+html,body{height:100%}
+body{
+  margin:0;
+  font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
+  color:var(--text);
+  background: radial-gradient(1200px 700px at 20% -10%, rgba(103,232,249,.16), transparent 60%),
+              radial-gradient(900px 600px at 100% 10%, rgba(167,139,250,.14), transparent 55%),
+              linear-gradient(180deg,var(--bg0),var(--bg2));
+}
+#app{max-width:720px;margin:0 auto;padding:16px}
+.hidden{display:none !important}
 
 .topbar{
-  position:sticky;top:0;
-  background:rgba(255,255,255,.1);
-  backdrop-filter:blur(12px);
-  padding:12px;border-radius:18px;
+  position:sticky; top:12px; z-index:50;
+  background:rgba(255,255,255,.06);
+  border:1px solid var(--stroke);
+  border-radius:22px;
+  padding:12px 12px 10px;
+  backdrop-filter: blur(14px);
 }
-.stats{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
-.stat{padding:6px 10px;border-radius:999px;background:rgba(255,255,255,.15);font-size:12px;font-weight:800}
-.progress{height:10px;background:rgba(255,255,255,.15);border-radius:999px;overflow:hidden;margin-top:8px}
-.progress div{height:100%;background:linear-gradient(90deg,#67e8f9,#a78bfa);width:0%}
+.row{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.brand{display:flex;align-items:center;gap:10px;font-weight:950;letter-spacing:.2px}
+.badge{display:inline-flex;align-items:center;justify-content:center;width:34px;height:34px;border-radius:12px;
+  background:linear-gradient(135deg, rgba(103,232,249,.22), rgba(167,139,250,.18));
+  border:1px solid rgba(255,255,255,.12);
+}
+.menuBtn{
+  appearance:none;border:none;cursor:pointer;
+  background:rgba(255,255,255,.09);
+  border:1px solid rgba(255,255,255,.10);
+  color:var(--text);
+  padding:10px 12px;border-radius:14px;
+  font-weight:900;
+}
+.menuBtn:active{transform:scale(.98)}
+
+.hud{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+.chip{
+  display:inline-flex;align-items:center;gap:6px;
+  padding:7px 10px;border-radius:999px;
+  background:rgba(255,255,255,.07);
+  border:1px solid rgba(255,255,255,.10);
+  font-weight:850;font-size:12px;color:var(--text);
+}
+.chip small{color:var(--muted);font-weight:800}
+.progress{height:10px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.10);
+  border-radius:999px;margin-top:10px;overflow:hidden}
+.progress > div{height:100%;width:0%;
+  background:linear-gradient(90deg,var(--accent),var(--accent2));
+  transition:width .25s ease;
+}
 
 .panel{
-  margin-top:14px;padding:16px;border-radius:18px;
-  background:rgba(255,255,255,.1)
+  margin-top:14px;
+  background:var(--card);
+  border:1px solid var(--stroke);
+  border-radius:22px;
+  padding:16px;
 }
-.title{font-size:18px;font-weight:900}
-.grid{display:grid;gap:10px;margin-top:12px}
+.h1{font-size:20px;font-weight:950;margin:0 0 10px}
+.sub{color:var(--muted);font-weight:800;margin:0 0 14px}
+.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+@media (max-width:520px){.grid{grid-template-columns:1fr}}
 .card{
-  padding:14px;border-radius:14px;
-  background:rgba(255,255,255,.15);
-  font-weight:900
+  cursor:pointer;
+  padding:14px 14px 12px;
+  border-radius:18px;
+  background:rgba(255,255,255,.075);
+  border:1px solid rgba(255,255,255,.10);
+}
+.card:hover{background:rgba(255,255,255,.09)}
+.cardTitle{font-weight:950}
+.cardDesc{margin-top:6px;color:var(--muted);font-weight:800;font-size:12px}
+
+.pillRow{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
+.pill{
+  cursor:pointer;
+  padding:10px 12px;border-radius:999px;
+  background:rgba(255,255,255,.07);
+  border:1px solid rgba(255,255,255,.10);
+  font-weight:900;font-size:13px;
+}
+.pill.active{outline:2px solid rgba(103,232,249,.35)}
+.pill:active{transform:scale(.98)}
+
+.qbox{margin-top:10px}
+.qTitle{font-size:18px;font-weight:950;margin:0 0 12px;line-height:1.2}
+.flagBox{display:flex;justify-content:center;align-items:center;
+  font-size:74px;line-height:1;margin:10px 0 12px;
+}
+.options{display:grid;gap:10px}
+.opt{
+  cursor:pointer;
+  padding:14px 14px;
+  border-radius:16px;
+  background:rgba(255,255,255,.075);
+  border:1px solid rgba(255,255,255,.10);
+  font-weight:950;
+  display:flex;justify-content:space-between;align-items:center;gap:10px;
+}
+.opt:hover{background:rgba(255,255,255,.09)}
+.opt small{color:var(--muted);font-weight:800}
+.opt.correct{background:rgba(34,197,94,.20);border-color:rgba(34,197,94,.45)}
+.opt.wrong{background:rgba(239,68,68,.16);border-color:rgba(239,68,68,.45)}
+
+.actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px}
+.btn{
+  cursor:pointer; border:none;
+  padding:12px 14px;border-radius:16px;
+  font-weight:950;color:var(--text);
+  background:rgba(255,255,255,.09);
+  border:1px solid rgba(255,255,255,.10);
+}
+.btnPrimary{
+  background:linear-gradient(90deg,var(--accent),var(--accent2));
+  border:none;
+}
+.btn:active{transform:scale(.98)}
+.btn[disabled]{opacity:.55;cursor:not-allowed}
+
+.feedback{
+  margin-top:10px;
+  padding:12px 12px;
+  border-radius:16px;
+  border:1px solid rgba(255,255,255,.10);
+  background:rgba(255,255,255,.06);
+  color:var(--text);
+  font-weight:900;
+}
+.feedback .muted{color:var(--muted);font-weight:800}
+
+.toast{
+  position:fixed;left:50%;transform:translateX(-50%);
+  bottom:18px;z-index:99;
+  background:rgba(10,14,24,.85);
+  border:1px solid rgba(255,255,255,.14);
+  color:var(--text);
+  padding:10px 12px;border-radius:14px;
+  font-weight:900;font-size:13px;
+  max-width:min(640px,calc(100% - 24px));
+  display:none;
 }
 
-.option{
-  padding:14px;border-radius:14px;
-  background:rgba(255,255,255,.15);
-  margin-bottom:8px;font-weight:900
-}
-.correct{background:rgba(34,197,94,.6)}
-.wrong{background:rgba(239,68,68,.6)}
-.flag{font-size:64px;text-align:center}
-.feedback{margin-top:8px;font-weight:900}
-
-.primary{
-  width:100%;padding:14px;border-radius:14px;
-  border:none;font-weight:900;
-  background:linear-gradient(90deg,#67e8f9,#a78bfa)
-}
+@keyframes pulse{0%{transform:scale(1)}50%{transform:scale(1.03)}100%{transform:scale(1)}}
+@keyframes shake{0%{transform:translateX(0)}25%{transform:translateX(-4px)}50%{transform:translateX(4px)}75%{transform:translateX(-3px)}100%{transform:translateX(0)}}
+.opt.correct{animation:pulse .22s ease-out}
+.opt.wrong{animation:shake .22s ease-out}
 </style>
 </head>
-
 <body>
 <div id="app">
 
-<div class="topbar">
-  <b>🌍 Geography Trainer</b>
-  <div class="stats">
-    <div class="stat">❤️ <span id="lives">3</span></div>
-    <div class="stat">⏱️ <span id="time">--</span></div>
-    <div class="stat">🏆 <span id="score">0</span></div>
+  <div class="topbar">
+    <div class="row">
+      <div class="brand">
+        <div class="badge">🌍</div>
+        <div>
+          <div style="font-size:14px; font-weight:1000;">Geography Trainer</div>
+          <div style="font-size:12px; color:var(--muted); font-weight:850;" id="subtitle">Modo: —</div>
+        </div>
+      </div>
+      <button class="menuBtn" id="menuBtn">🏠 Menú</button>
+    </div>
+
+    <div class="hud">
+      <div class="chip">❤️ <span id="hudLives">3</span><small id="hudLivesLabel">vidas</small></div>
+      <div class="chip">⏱️ <span id="hudTime">—</span><small id="hudTimeLabel">tiempo</small></div>
+      <div class="chip">🛟 <span id="hud5050">3</span><small>50/50</small></div>
+      <div class="chip">🔥 <span id="hudStreak">0</span><small>racha</small></div>
+      <div class="chip">🏆 <span id="hudScore">0</span><small>puntos</small></div>
+      <div class="chip">📚 <span id="hudQ">0</span>/<span id="hudTotal">0</span><small>preg</small></div>
+    </div>
+
+    <div class="progress"><div id="hudBar"></div></div>
   </div>
-  <div class="progress"><div id="bar"></div></div>
+
+  <div id="menu" class="panel">
+    <h2 class="h1">Elige un modo</h2>
+    <p class="sub">Estilo Duolingo: rápido, claro y con feedback inmediato. (110 países cargados)</p>
+
+    <div class="grid">
+      <div class="card" data-mode="classic">
+        <div class="cardTitle">✅ Classic</div>
+        <div class="cardDesc">3 vidas • preguntas infinitas • mezcla de temas</div>
+      </div>
+      <div class="card" data-mode="countdown">
+        <div class="cardTitle">⏳ Countdown</div>
+        <div class="cardDesc">60s total • +2s por correcta • score por racha</div>
+      </div>
+      <div class="card" data-mode="flags">
+        <div class="cardTitle">🚩 Flags</div>
+        <div class="cardDesc">bandera → país • 3 vidas • 50/50</div>
+      </div>
+      <div class="card" data-mode="test">
+        <div class="cardTitle">📝 TEST</div>
+        <div class="cardDesc">elige # preguntas • calificación final • revisión</div>
+      </div>
+    </div>
+
+    <div style="margin-top:14px">
+      <div class="sub" style="margin-bottom:8px">Temas (en Classic/Countdown/Test):</div>
+      <div class="pillRow" id="topicRow"></div>
+    </div>
+
+    <div class="pillRow" style="margin-top:12px">
+      <div class="pill" id="toggleSound">🔊 Sonido: ON</div>
+      <div class="pill" id="toggleHaptics">📳 Haptic: ON</div>
+    </div>
+  </div>
+
+  <div id="testSetup" class="panel hidden">
+    <h2 class="h1">Configurar TEST</h2>
+    <p class="sub">Escoge cuántas preguntas. Se mezclan temas (y puedes incluir banderas).</p>
+
+    <div class="pillRow" id="testCounts"></div>
+
+    <div class="pillRow" style="margin-top:10px">
+      <div class="pill" id="testIncludeFlags">🚩 Incluir banderas: SÍ</div>
+    </div>
+
+    <div class="actions" style="margin-top:12px">
+      <button class="btn" id="backToMenu1">← Volver</button>
+      <button class="btn btnPrimary" id="startTestBtn">Empezar TEST</button>
+    </div>
+  </div>
+
+  <div id="game" class="panel hidden">
+    <div class="qbox">
+      <div id="flagBox" class="flagBox hidden"></div>
+      <h3 id="qTitle" class="qTitle">—</h3>
+
+      <div class="actions">
+        <button class="btn" id="btn5050">🛟 50/50</button>
+        <button class="btn" id="btnSkip">⏭️ Saltar</button>
+      </div>
+
+      <div class="options" id="options"></div>
+
+      <div class="feedback hidden" id="feedback"></div>
+
+      <div class="actions">
+        <button class="btn btnPrimary hidden" id="btnNext">Siguiente</button>
+        <button class="btn hidden" id="btnFinish">Terminar</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="results" class="panel hidden">
+    <h2 class="h1">Resultados</h2>
+    <p class="sub" id="resultsSummary">—</p>
+    <div id="resultsList"></div>
+    <div class="actions">
+      <button class="btn" id="backToMenu2">🏠 Menú</button>
+      <button class="btn btnPrimary" id="playAgain">Jugar otra vez</button>
+    </div>
+  </div>
+
 </div>
 
-<!-- MENU -->
-<div id="menu" class="panel">
-  <div class="title">Choose Mode</div>
-  <div class="grid">
-    <div class="card" onclick="startClassic()">Classic</div>
-    <div class="card" onclick="startCountdown()">Countdown</div>
-    <div class="card" onclick="startFlags()">Flags</div>
-    <div class="card" onclick="showTestMenu()">TEST MODE</div>
-  </div>
-</div>
-
-<!-- TEST MENU -->
-<div id="testMenu" class="panel hidden">
-  <div class="title">Test Mode – Questions</div>
-  <div class="grid">
-    <div class="card" onclick="startTest(10)">10 Questions</div>
-    <div class="card" onclick="startTest(20)">20 Questions</div>
-    <div class="card" onclick="startTest(30)">30 Questions</div>
-    <div class="card" onclick="startTest(50)">50 Questions</div>
-  </div>
-</div>
-
-<!-- GAME -->
-<div id="game" class="panel hidden">
-  <div id="flagBox" class="flag hidden"></div>
-  <div id="question" class="title"></div>
-  <div id="options"></div>
-  <div id="feedback" class="feedback hidden"></div>
-  <button id="nextBtn" class="primary hidden">Next</button>
-</div>
+<div class="toast" id="toast">—</div>
 
 <script>
-const DATA=[
-  {c:"Costa Rica",cap:"San José",lang:"Spanish",dem:"Costa Rican",gov:"Republic",eco:"Tourism",code:"CR"},
-  {c:"Japan",cap:"Tokyo",lang:"Japanese",dem:"Japanese",gov:"Constitutional monarchy",eco:"Electronics",code:"JP"},
-  {c:"Germany",cap:"Berlin",lang:"German",dem:"German",gov:"Federal republic",eco:"Manufacturing",code:"DE"},
-  {c:"Brazil",cap:"Brasília",lang:"Portuguese",dem:"Brazilian",gov:"Federal republic",eco:"Coffee",code:"BR"},
-  {c:"Canada",cap:"Ottawa",lang:"English & French",dem:"Canadian",gov:"Constitutional monarchy",eco:"Energy",code:"CA"},
+const DATA = [{"code": "US", "name": "United States", "capital": "Washington, D.C.", "language": "English", "demonym": "American", "government": "Federal republic", "economy": "Technology & services"}, {"code": "CA", "name": "Canada", "capital": "Ottawa", "language": "English & French", "demonym": "Canadian", "government": "Constitutional monarchy", "economy": "Energy & services"}, {"code": "MX", "name": "Mexico", "capital": "Mexico City", "language": "Spanish", "demonym": "Mexican", "government": "Federal republic", "economy": "Manufacturing & oil"}, {"code": "GT", "name": "Guatemala", "capital": "Guatemala City", "language": "Spanish", "demonym": "Guatemalan", "government": "Republic", "economy": "Agriculture"}, {"code": "BZ", "name": "Belize", "capital": "Belmopan", "language": "English", "demonym": "Belizean", "government": "Constitutional monarchy", "economy": "Tourism & agriculture"}, {"code": "HN", "name": "Honduras", "capital": "Tegucigalpa", "language": "Spanish", "demonym": "Honduran", "government": "Republic", "economy": "Agriculture"}, {"code": "SV", "name": "El Salvador", "capital": "San Salvador", "language": "Spanish", "demonym": "Salvadoran", "government": "Republic", "economy": "Services"}, {"code": "NI", "name": "Nicaragua", "capital": "Managua", "language": "Spanish", "demonym": "Nicaraguan", "government": "Republic", "economy": "Agriculture"}, {"code": "CR", "name": "Costa Rica", "capital": "San José", "language": "Spanish", "demonym": "Costa Rican", "government": "Republic", "economy": "Services & tourism"}, {"code": "PA", "name": "Panama", "capital": "Panama City", "language": "Spanish", "demonym": "Panamanian", "government": "Republic", "economy": "Canal & services"}, {"code": "CU", "name": "Cuba", "capital": "Havana", "language": "Spanish", "demonym": "Cuban", "government": "One-party state", "economy": "Tourism & services"}, {"code": "DO", "name": "Dominican Republic", "capital": "Santo Domingo", "language": "Spanish", "demonym": "Dominican", "government": "Republic", "economy": "Tourism"}, {"code": "HT", "name": "Haiti", "capital": "Port-au-Prince", "language": "Haitian Creole & French", "demonym": "Haitian", "government": "Republic", "economy": "Agriculture"}, {"code": "JM", "name": "Jamaica", "capital": "Kingston", "language": "English", "demonym": "Jamaican", "government": "Constitutional monarchy", "economy": "Tourism"}, {"code": "BS", "name": "Bahamas", "capital": "Nassau", "language": "English", "demonym": "Bahamian", "government": "Constitutional monarchy", "economy": "Tourism"}, {"code": "BB", "name": "Barbados", "capital": "Bridgetown", "language": "English", "demonym": "Barbadian", "government": "Republic", "economy": "Tourism"}, {"code": "TT", "name": "Trinidad and Tobago", "capital": "Port of Spain", "language": "English", "demonym": "Trinidadian and Tobagonian", "government": "Republic", "economy": "Oil & gas"}, {"code": "CO", "name": "Colombia", "capital": "Bogotá", "language": "Spanish", "demonym": "Colombian", "government": "Republic", "economy": "Oil, coffee"}, {"code": "VE", "name": "Venezuela", "capital": "Caracas", "language": "Spanish", "demonym": "Venezuelan", "government": "Republic", "economy": "Oil"}, {"code": "EC", "name": "Ecuador", "capital": "Quito", "language": "Spanish", "demonym": "Ecuadorian", "government": "Republic", "economy": "Oil & agriculture"}, {"code": "PE", "name": "Peru", "capital": "Lima", "language": "Spanish", "demonym": "Peruvian", "government": "Republic", "economy": "Mining"}, {"code": "BO", "name": "Bolivia", "capital": "Sucre", "language": "Spanish", "demonym": "Bolivian", "government": "Republic", "economy": "Mining & gas"}, {"code": "CL", "name": "Chile", "capital": "Santiago", "language": "Spanish", "demonym": "Chilean", "government": "Republic", "economy": "Mining (copper)"}, {"code": "AR", "name": "Argentina", "capital": "Buenos Aires", "language": "Spanish", "demonym": "Argentine", "government": "Federal republic", "economy": "Agriculture & industry"}, {"code": "UY", "name": "Uruguay", "capital": "Montevideo", "language": "Spanish", "demonym": "Uruguayan", "government": "Republic", "economy": "Services & agriculture"}, {"code": "PY", "name": "Paraguay", "capital": "Asunción", "language": "Spanish & Guaraní", "demonym": "Paraguayan", "government": "Republic", "economy": "Agriculture & hydroelectric"}, {"code": "BR", "name": "Brazil", "capital": "Brasília", "language": "Portuguese", "demonym": "Brazilian", "government": "Federal republic", "economy": "Coffee & soybeans"}, {"code": "GY", "name": "Guyana", "capital": "Georgetown", "language": "English", "demonym": "Guyanese", "government": "Republic", "economy": "Oil & mining"}, {"code": "SR", "name": "Suriname", "capital": "Paramaribo", "language": "Dutch", "demonym": "Surinamese", "government": "Republic", "economy": "Mining"}, {"code": "GB", "name": "United Kingdom", "capital": "London", "language": "English", "demonym": "British", "government": "Constitutional monarchy", "economy": "Finance & services"}, {"code": "IE", "name": "Ireland", "capital": "Dublin", "language": "English & Irish", "demonym": "Irish", "government": "Republic", "economy": "Technology & services"}, {"code": "FR", "name": "France", "capital": "Paris", "language": "French", "demonym": "French", "government": "Republic", "economy": "Industry & services"}, {"code": "ES", "name": "Spain", "capital": "Madrid", "language": "Spanish", "demonym": "Spanish", "government": "Constitutional monarchy", "economy": "Tourism & services"}, {"code": "PT", "name": "Portugal", "capital": "Lisbon", "language": "Portuguese", "demonym": "Portuguese", "government": "Republic", "economy": "Tourism & services"}, {"code": "DE", "name": "Germany", "capital": "Berlin", "language": "German", "demonym": "German", "government": "Federal republic", "economy": "Manufacturing"}, {"code": "NL", "name": "Netherlands", "capital": "Amsterdam", "language": "Dutch", "demonym": "Dutch", "government": "Constitutional monarchy", "economy": "Trade & services"}, {"code": "BE", "name": "Belgium", "capital": "Brussels", "language": "Dutch, French, German", "demonym": "Belgian", "government": "Federal constitutional monarchy", "economy": "Industry & services"}, {"code": "LU", "name": "Luxembourg", "capital": "Luxembourg", "language": "Luxembourgish, French, German", "demonym": "Luxembourger", "government": "Constitutional monarchy", "economy": "Finance"}, {"code": "CH", "name": "Switzerland", "capital": "Bern", "language": "German, French, Italian, Romansh", "demonym": "Swiss", "government": "Federal republic", "economy": "Finance & pharma"}, {"code": "IT", "name": "Italy", "capital": "Rome", "language": "Italian", "demonym": "Italian", "government": "Republic", "economy": "Manufacturing"}, {"code": "AT", "name": "Austria", "capital": "Vienna", "language": "German", "demonym": "Austrian", "government": "Republic", "economy": "Industry & services"}, {"code": "DK", "name": "Denmark", "capital": "Copenhagen", "language": "Danish", "demonym": "Danish", "government": "Constitutional monarchy", "economy": "Services"}, {"code": "SE", "name": "Sweden", "capital": "Stockholm", "language": "Swedish", "demonym": "Swedish", "government": "Constitutional monarchy", "economy": "Manufacturing & tech"}, {"code": "NO", "name": "Norway", "capital": "Oslo", "language": "Norwegian", "demonym": "Norwegian", "government": "Constitutional monarchy", "economy": "Oil & gas"}, {"code": "FI", "name": "Finland", "capital": "Helsinki", "language": "Finnish & Swedish", "demonym": "Finnish", "government": "Republic", "economy": "Technology"}, {"code": "IS", "name": "Iceland", "capital": "Reykjavík", "language": "Icelandic", "demonym": "Icelandic", "government": "Republic", "economy": "Fishing & tourism"}, {"code": "PL", "name": "Poland", "capital": "Warsaw", "language": "Polish", "demonym": "Polish", "government": "Republic", "economy": "Manufacturing"}, {"code": "CZ", "name": "Czechia", "capital": "Prague", "language": "Czech", "demonym": "Czech", "government": "Republic", "economy": "Manufacturing"}, {"code": "SK", "name": "Slovakia", "capital": "Bratislava", "language": "Slovak", "demonym": "Slovak", "government": "Republic", "economy": "Manufacturing"}, {"code": "HU", "name": "Hungary", "capital": "Budapest", "language": "Hungarian", "demonym": "Hungarian", "government": "Republic", "economy": "Manufacturing"}, {"code": "RO", "name": "Romania", "capital": "Bucharest", "language": "Romanian", "demonym": "Romanian", "government": "Republic", "economy": "Industry"}, {"code": "BG", "name": "Bulgaria", "capital": "Sofia", "language": "Bulgarian", "demonym": "Bulgarian", "government": "Republic", "economy": "Industry"}, {"code": "GR", "name": "Greece", "capital": "Athens", "language": "Greek", "demonym": "Greek", "government": "Republic", "economy": "Tourism & shipping"}, {"code": "HR", "name": "Croatia", "capital": "Zagreb", "language": "Croatian", "demonym": "Croatian", "government": "Republic", "economy": "Tourism"}, {"code": "RS", "name": "Serbia", "capital": "Belgrade", "language": "Serbian", "demonym": "Serbian", "government": "Republic", "economy": "Industry"}, {"code": "UA", "name": "Ukraine", "capital": "Kyiv", "language": "Ukrainian", "demonym": "Ukrainian", "government": "Republic", "economy": "Agriculture"}, {"code": "RU", "name": "Russia", "capital": "Moscow", "language": "Russian", "demonym": "Russian", "government": "Federation", "economy": "Oil & gas"}, {"code": "TR", "name": "Turkey", "capital": "Ankara", "language": "Turkish", "demonym": "Turkish", "government": "Republic", "economy": "Manufacturing"}, {"code": "SA", "name": "Saudi Arabia", "capital": "Riyadh", "language": "Arabic", "demonym": "Saudi", "government": "Absolute monarchy", "economy": "Oil"}, {"code": "AE", "name": "United Arab Emirates", "capital": "Abu Dhabi", "language": "Arabic", "demonym": "Emirati", "government": "Federation", "economy": "Oil & services"}, {"code": "QA", "name": "Qatar", "capital": "Doha", "language": "Arabic", "demonym": "Qatari", "government": "Monarchy", "economy": "Gas"}, {"code": "IL", "name": "Israel", "capital": "Jerusalem", "language": "Hebrew", "demonym": "Israeli", "government": "Parliamentary democracy", "economy": "Technology"}, {"code": "IR", "name": "Iran", "capital": "Tehran", "language": "Persian (Farsi)", "demonym": "Iranian", "government": "Islamic republic", "economy": "Oil & gas"}, {"code": "IQ", "name": "Iraq", "capital": "Baghdad", "language": "Arabic & Kurdish", "demonym": "Iraqi", "government": "Republic", "economy": "Oil"}, {"code": "PK", "name": "Pakistan", "capital": "Islamabad", "language": "Urdu", "demonym": "Pakistani", "government": "Republic", "economy": "Textiles"}, {"code": "IN", "name": "India", "capital": "New Delhi", "language": "Hindi & English", "demonym": "Indian", "government": "Federal republic", "economy": "Services & IT"}, {"code": "BD", "name": "Bangladesh", "capital": "Dhaka", "language": "Bengali", "demonym": "Bangladeshi", "government": "Republic", "economy": "Textiles"}, {"code": "NP", "name": "Nepal", "capital": "Kathmandu", "language": "Nepali", "demonym": "Nepali", "government": "Federal republic", "economy": "Tourism"}, {"code": "LK", "name": "Sri Lanka", "capital": "Sri Jayawardenepura Kotte", "language": "Sinhala & Tamil", "demonym": "Sri Lankan", "government": "Republic", "economy": "Tea"}, {"code": "AF", "name": "Afghanistan", "capital": "Kabul", "language": "Dari & Pashto", "demonym": "Afghan", "government": "Republic", "economy": "Agriculture"}, {"code": "TH", "name": "Thailand", "capital": "Bangkok", "language": "Thai", "demonym": "Thai", "government": "Constitutional monarchy", "economy": "Tourism"}, {"code": "VN", "name": "Vietnam", "capital": "Hanoi", "language": "Vietnamese", "demonym": "Vietnamese", "government": "One-party state", "economy": "Manufacturing"}, {"code": "SG", "name": "Singapore", "capital": "Singapore", "language": "English, Malay, Chinese, Tamil", "demonym": "Singaporean", "government": "Republic", "economy": "Finance & trade"}, {"code": "MY", "name": "Malaysia", "capital": "Kuala Lumpur", "language": "Malay", "demonym": "Malaysian", "government": "Constitutional monarchy", "economy": "Manufacturing"}, {"code": "ID", "name": "Indonesia", "capital": "Jakarta", "language": "Indonesian", "demonym": "Indonesian", "government": "Republic", "economy": "Manufacturing"}, {"code": "PH", "name": "Philippines", "capital": "Manila", "language": "Filipino & English", "demonym": "Filipino", "government": "Republic", "economy": "Services"}, {"code": "CN", "name": "China", "capital": "Beijing", "language": "Chinese (Mandarin)", "demonym": "Chinese", "government": "One-party state", "economy": "Manufacturing"}, {"code": "JP", "name": "Japan", "capital": "Tokyo", "language": "Japanese", "demonym": "Japanese", "government": "Constitutional monarchy", "economy": "Cars & electronics"}, {"code": "KR", "name": "South Korea", "capital": "Seoul", "language": "Korean", "demonym": "South Korean", "government": "Republic", "economy": "Electronics"}, {"code": "AU", "name": "Australia", "capital": "Canberra", "language": "English", "demonym": "Australian", "government": "Constitutional monarchy", "economy": "Mining"}, {"code": "NZ", "name": "New Zealand", "capital": "Wellington", "language": "English", "demonym": "New Zealander", "government": "Constitutional monarchy", "economy": "Agriculture"}, {"code": "MA", "name": "Morocco", "capital": "Rabat", "language": "Arabic", "demonym": "Moroccan", "government": "Constitutional monarchy", "economy": "Tourism & agriculture"}, {"code": "DZ", "name": "Algeria", "capital": "Algiers", "language": "Arabic", "demonym": "Algerian", "government": "Republic", "economy": "Oil & gas"}, {"code": "TN", "name": "Tunisia", "capital": "Tunis", "language": "Arabic", "demonym": "Tunisian", "government": "Republic", "economy": "Tourism"}, {"code": "EG", "name": "Egypt", "capital": "Cairo", "language": "Arabic", "demonym": "Egyptian", "government": "Republic", "economy": "Tourism & services"}, {"code": "NG", "name": "Nigeria", "capital": "Abuja", "language": "English", "demonym": "Nigerian", "government": "Federal republic", "economy": "Oil"}, {"code": "GH", "name": "Ghana", "capital": "Accra", "language": "English", "demonym": "Ghanaian", "government": "Republic", "economy": "Cocoa & gold"}, {"code": "SN", "name": "Senegal", "capital": "Dakar", "language": "French", "demonym": "Senegalese", "government": "Republic", "economy": "Fishing & services"}, {"code": "ET", "name": "Ethiopia", "capital": "Addis Ababa", "language": "Amharic", "demonym": "Ethiopian", "government": "Federation", "economy": "Agriculture"}, {"code": "KE", "name": "Kenya", "capital": "Nairobi", "language": "Swahili & English", "demonym": "Kenyan", "government": "Republic", "economy": "Agriculture & tourism"}, {"code": "TZ", "name": "Tanzania", "capital": "Dodoma", "language": "Swahili", "demonym": "Tanzanian", "government": "Republic", "economy": "Tourism & agriculture"}, {"code": "UG", "name": "Uganda", "capital": "Kampala", "language": "English & Swahili", "demonym": "Ugandan", "government": "Republic", "economy": "Agriculture"}, {"code": "RW", "name": "Rwanda", "capital": "Kigali", "language": "Kinyarwanda, English, French", "demonym": "Rwandan", "government": "Republic", "economy": "Services"}, {"code": "ZA", "name": "South Africa", "capital": "Pretoria", "language": "English & others", "demonym": "South African", "government": "Republic", "economy": "Mining"}, {"code": "AO", "name": "Angola", "capital": "Luanda", "language": "Portuguese", "demonym": "Angolan", "government": "Republic", "economy": "Oil"}, {"code": "MZ", "name": "Mozambique", "capital": "Maputo", "language": "Portuguese", "demonym": "Mozambican", "government": "Republic", "economy": "Agriculture & gas"}, {"code": "ZW", "name": "Zimbabwe", "capital": "Harare", "language": "English & others", "demonym": "Zimbabwean", "government": "Republic", "economy": "Mining"}, {"code": "ZM", "name": "Zambia", "capital": "Lusaka", "language": "English", "demonym": "Zambian", "government": "Republic", "economy": "Mining (copper)"}, {"code": "MG", "name": "Madagascar", "capital": "Antananarivo", "language": "Malagasy & French", "demonym": "Malagasy", "government": "Republic", "economy": "Agriculture"}, {"code": "NA", "name": "Namibia", "capital": "Windhoek", "language": "English", "demonym": "Namibian", "government": "Republic", "economy": "Mining"}, {"code": "BW", "name": "Botswana", "capital": "Gaborone", "language": "English & Tswana", "demonym": "Motswana", "government": "Republic", "economy": "Mining (diamonds)"}, {"code": "CM", "name": "Cameroon", "capital": "Yaoundé", "language": "French & English", "demonym": "Cameroonian", "government": "Republic", "economy": "Agriculture"}, {"code": "CI", "name": "Côte d’Ivoire", "capital": "Yamoussoukro", "language": "French", "demonym": "Ivorian", "government": "Republic", "economy": "Cocoa"}, {"code": "AL", "name": "Albania", "capital": "Tirana", "language": "Albanian", "demonym": "Albanian", "government": "Republic", "economy": "Services"}, {"code": "SI", "name": "Slovenia", "capital": "Ljubljana", "language": "Slovene", "demonym": "Slovenian", "government": "Republic", "economy": "Manufacturing"}, {"code": "LT", "name": "Lithuania", "capital": "Vilnius", "language": "Lithuanian", "demonym": "Lithuanian", "government": "Republic", "economy": "Services"}, {"code": "LV", "name": "Latvia", "capital": "Riga", "language": "Latvian", "demonym": "Latvian", "government": "Republic", "economy": "Services"}, {"code": "EE", "name": "Estonia", "capital": "Tallinn", "language": "Estonian", "demonym": "Estonian", "government": "Republic", "economy": "Technology"}, {"code": "BA", "name": "Bosnia and Herzegovina", "capital": "Sarajevo", "language": "Bosnian, Croatian, Serbian", "demonym": "Bosnian", "government": "Federation", "economy": "Industry"}, {"code": "MK", "name": "North Macedonia", "capital": "Skopje", "language": "Macedonian", "demonym": "Macedonian", "government": "Republic", "economy": "Services"}];
+
+/* ---------- Settings ---------- */
+let settings = {
+  sound: true,
+  haptics: true
+};
+
+/* ---------- Haptics ---------- */
+function vibrate(pattern) {
+  if (!settings.haptics) return;
+  if (!('vibrate' in navigator)) return;
+  try { navigator.vibrate(pattern); } catch (e) {}
+}
+
+/* ---------- Sound (WebAudio) ---------- */
+let audioCtx = null;
+function beep(freq=440, duration=0.08, type='sine', gain=0.06) {
+  if (!settings.sound) return;
+  try {
+    audioCtx = audioCtx || new (window.AudioContext || window.webkitAudioContext)();
+    const o = audioCtx.createOscillator();
+    const g = audioCtx.createGain();
+    o.type = type; o.frequency.value = freq;
+    g.gain.value = gain;
+    o.connect(g); g.connect(audioCtx.destination);
+    o.start();
+    o.stop(audioCtx.currentTime + duration);
+  } catch (e) {}
+}
+function sfxCorrect() { beep(660,.07,'sine',.06); setTimeout(()=>beep(880,.06,'sine',.05), 70); }
+function sfxWrong() { beep(220,.09,'triangle',.07); }
+function sfxFinish() { beep(523,.08,'sine',.06); setTimeout(()=>beep(659,.08,'sine',.06), 90); setTimeout(()=>beep(784,.10,'sine',.06), 180); }
+
+/* ---------- UI helpers ---------- */
+const $ = (id)=>document.getElementById(id);
+function toast(msg) {
+  const t = $('toast');
+  t.textContent = msg;
+  t.style.display='block';
+  clearTimeout(toast._tm);
+  toast._tm = setTimeout(()=>t.style.display='none', 1600);
+}
+
+const TOPICS = [
+  {key:'mixed', label:'🎲 Mixed'},
+  {key:'capital', label:'🏛️ Capitales'},
+  {key:'language', label:'🗣️ Idioma'},
+  {key:'demonym', label:'👤 Nacionalidad'},
+  {key:'government', label:'🏛️ Gobierno'},
+  {key:'economy', label:'💼 Economía'},
 ];
-while(DATA.length<110) DATA.push(...DATA.slice(0,110-DATA.length));
 
-let mode="",pool=[],i=0,score=0,lives=3,testLimit=0;
-
-function iso(code){return String.fromCodePoint(...[...code].map(c=>127397+c.charCodeAt()))}
-
-function buildMixed(){
-  let p=[];
-  DATA.forEach(d=>{
-    p.push({q:`Capital of ${d.c}?`,a:d.cap,o:DATA.map(x=>x.cap).filter(x=>x!==d.cap).slice(0,3)});
-    p.push({q:`Language of ${d.c}?`,a:d.lang,o:DATA.map(x=>x.lang).filter(x=>x!==d.lang).slice(0,3)});
-    p.push({q:`Person from ${d.c}?`,a:d.dem,o:DATA.map(x=>x.dem).filter(x=>x!==d.dem).slice(0,3)});
-    p.push({q:`Government of ${d.c}?`,a:d.gov,o:DATA.map(x=>x.gov).filter(x=>x!==d.gov).slice(0,3)});
-    p.push({q:`Economy of ${d.c}?`,a:d.eco,o:DATA.map(x=>x.eco).filter(x=>x!==d.eco).slice(0,3)});
+let selectedTopic = 'mixed';
+function renderTopics() {
+  const row = $('topicRow');
+  row.innerHTML='';
+  TOPICS.forEach(t=>{
+    const b = document.createElement('div');
+    b.className = 'pill' + (t.key===selectedTopic ? ' active':'' );
+    b.textContent = t.label;
+    b.onclick = ()=>{ selectedTopic = t.key; renderTopics(); };
+    row.appendChild(b);
   });
-  return p.sort(()=>Math.random()-.5);
+}
+renderTopics();
+
+/* ---------- Mode state ---------- */
+let mode = null; // classic|countdown|flags|test
+let lives = 3;
+let score = 0;
+let streak = 0;
+let lifelines = 3;
+let timeLeft = 60;
+let timer = null;
+
+let totalQuestions = 0;
+let qIndex = 0;
+let questionQueue = []; // array of Question objects
+let currentQuestion = null;
+let answered = false;
+let used5050ThisQ = false;
+
+let testIncludeFlags = true;
+let testCount = 20;
+let testReview = []; // {prompt, chosen, correct, ok}
+
+function setSubtitle() {
+  const map = {classic:'Classic', countdown:'Countdown', flags:'Flags', test:'TEST'};
+  $('subtitle').textContent = 'Modo: ' + (map[mode] || '—');
 }
 
-function buildFlags(){
-  return DATA.map(d=>({
-    q:"Which country has this flag?",
-    a:d.c,
-    o:DATA.map(x=>x.c).filter(x=>x!==d.c).slice(0,3),
-    flag:iso(d.code)
-  })).sort(()=>Math.random()-.5);
+/* ---------- Flags (emoji) ---------- */
+function toFlagEmoji(iso2) {
+  if (!iso2 || iso2.length!==2) return '🏳️';
+  const A = 0x1F1E6;
+  const code = iso2.toUpperCase();
+  return String.fromCodePoint(A + code.charCodeAt(0) - 65, A + code.charCodeAt(1) - 65);
 }
 
-function startClassic(){
-  mode="classic";lives=3;score=0;
-  pool=buildMixed();startGame();
-}
-function startCountdown(){
-  mode="countdown";lives=999;score=0;
-  pool=buildMixed();startGame();
-}
-function startFlags(){
-  mode="flags";lives=3;score=0;
-  pool=buildFlags();startGame();
-}
-function showTestMenu(){
-  menu.classList.add("hidden");
-  testMenu.classList.remove("hidden");
-}
-function startTest(n){
-  mode="test";testLimit=n;score=0;
-  pool=buildMixed().slice(0,n);
-  startGame();
-}
-
-function startGame(){
-  menu.classList.add("hidden");
-  testMenu.classList.add("hidden");
-  game.classList.remove("hidden");
-  i=0;load();
-}
-
-function load(){
-  if(i>=pool.length || (mode==="test"&&i>=testLimit)){
-    alert(`Test finished\nScore: ${score}/${(mode==="test"?testLimit:i)*10}`);
-    location.reload();return;
+/* ---------- Question engine ---------- */
+function sample(arr, n) {
+  const a = [...arr];
+  for (let i=a.length-1;i>0;i--) {
+    const j = Math.floor(Math.random()*(i+1));
+    [a[i],a[j]]=[a[j],a[i]];
   }
-  let q=pool[i];
-  question.textContent=q.q;
-  options.innerHTML="";
-  feedback.classList.add("hidden");
-  nextBtn.classList.add("hidden");
-  if(q.flag){flagBox.textContent=q.flag;flagBox.classList.remove("hidden")}
-  else flagBox.classList.add("hidden");
+  return a.slice(0,n);
+}
+function shuffle(arr) {
+  const a = [...arr];
+  for (let i=a.length-1;i>0;i--) {
+    const j = Math.floor(Math.random()*(i+1));
+    [a[i],a[j]]=[a[j],a[i]];
+  }
+  return a;
+}
 
-  [...q.o,q.a].sort(()=>Math.random()-.5).forEach(opt=>{
-    let d=document.createElement("div");
-    d.className="option";d.textContent=opt;
-    d.onclick=()=>answer(d,opt===q.a);
-    options.appendChild(d);
+function buildQuestion(topicKey, country) {
+  const c = country;
+  if (topicKey === 'flags') {
+    return {
+      type:'flags',
+      prompt:'¿De qué país es esta bandera?',
+      flag: toFlagEmoji(c.code),
+      correct: c.name,
+      correctMeta: '',
+      options: buildOptionsCountryNames(c.name),
+    };
+  }
+  if (topicKey === 'capital') {
+    return {
+      type:'capital',
+      prompt:`¿Cuál es la capital de ${c.name}?`,
+      correct: c.capital,
+      correctMeta: c.name,
+      options: buildOptionsField('capital', c.capital, c.code),
+    };
+  }
+  if (topicKey === 'language') {
+    return {
+      type:'language',
+      prompt:`¿Qué idioma se habla en ${c.name}?`,
+      correct: c.language,
+      correctMeta: c.name,
+      options: buildOptionsField('language', c.language, c.code),
+    };
+  }
+  if (topicKey === 'demonym') {
+    return {
+      type:'demonym',
+      prompt:`Una persona de ${c.name} es...`,
+      correct: c.demonym,
+      correctMeta: c.name,
+      options: buildOptionsField('demonym', c.demonym, c.code),
+    };
+  }
+  if (topicKey === 'government') {
+    return {
+      type:'government',
+      prompt:`${c.name} tiene qué tipo de gobierno?`,
+      correct: c.government,
+      correctMeta: c.name,
+      options: buildOptionsField('government', c.government, c.code),
+    };
+  }
+  if (topicKey === 'economy') {
+    return {
+      type:'economy',
+      prompt:`Un ejemplo de la economía de ${c.name} es...`,
+      correct: c.economy,
+      correctMeta: c.name,
+      options: buildOptionsField('economy', c.economy, c.code),
+    };
+  }
+  // mixed
+  const pool = ['capital','language','demonym','government','economy'];
+  const pick = pool[Math.floor(Math.random()*pool.length)];
+  return buildQuestion(pick, c);
+}
+
+function buildOptionsCountryNames(correctName) {
+  const wrongs = sample(DATA.filter(x=>x.name!==correctName), 3).map(x=>x.name);
+  return shuffle([correctName, ...wrongs]);
+}
+
+function buildOptionsField(field, correctValue, correctCode) {
+  const values = [];
+  const seen = new Set([correctValue]);
+  const candidates = shuffle(DATA.filter(x=>x.code!==correctCode));
+  for (const c of candidates) {
+    const v = c[field];
+    if (!v) continue;
+    if (seen.has(v)) continue;
+    seen.add(v);
+    values.push(v);
+    if (values.length>=3) break;
+  }
+  while(values.length<3) values.push('—');
+  return shuffle([correctValue, ...values]);
+}
+
+function buildQueueForMode() {
+  const baseCountries = shuffle(DATA);
+  if (mode === 'classic' || mode === 'countdown') {
+    totalQuestions = 9999;
+    return baseCountries.slice(0,50).map(c=>buildQuestion(selectedTopic, c));
+  }
+  if (mode === 'flags') {
+    totalQuestions = 50;
+    return baseCountries.slice(0,50).map(c=>buildQuestion('flags', c));
+  }
+  if (mode === 'test') {
+    totalQuestions = testCount;
+    const chosenCountries = baseCountries.slice(0, testCount);
+    const topics = () => {
+      if (selectedTopic !== 'mixed') return selectedTopic;
+      const pool = ['capital','language','demonym','government','economy'];
+      if (testIncludeFlags) pool.push('flags');
+      return pool[Math.floor(Math.random()*pool.length)];
+    };
+    return chosenCountries.map(c=>buildQuestion(topics(), c));
+  }
+  return [];
+}
+
+function topUpQueueIfNeeded() {
+  if (mode !== 'classic' && mode !== 'countdown') return;
+  if (questionQueue.length - qIndex > 15) return;
+  const more = shuffle(DATA).slice(0,40).map(c=>buildQuestion(selectedTopic, c));
+  questionQueue = questionQueue.concat(more);
+}
+
+/* ---------- Game flow ---------- */
+function resetRun() {
+  lives = 3;
+  score = 0;
+  streak = 0;
+  lifelines = 3;
+  timeLeft = 60;
+  qIndex = 0;
+  questionQueue = [];
+  currentQuestion = null;
+  answered = false;
+  used5050ThisQ = false;
+  testReview = [];
+}
+
+function show(viewId) {
+  ['menu','testSetup','game','results'].forEach(id=>$(id).classList.add('hidden'));
+  $(viewId).classList.remove('hidden');
+}
+
+function updateHUD() {
+  $('hudLives').textContent = lives;
+  $('hud5050').textContent = lifelines;
+  $('hudStreak').textContent = streak;
+  $('hudScore').textContent = score;
+  $('hudTime').textContent = (mode==='countdown' ? timeLeft : '—');
+  $('hudTimeLabel').textContent = (mode==='countdown' ? 's' : 'tiempo');
+  $('hudQ').textContent = Math.min(qIndex+1, totalQuestions===9999? (qIndex+1) : totalQuestions);
+  $('hudTotal').textContent = (totalQuestions===9999 ? '∞' : totalQuestions);
+  const denom = (totalQuestions===9999 ? Math.max(20, qIndex+1) : totalQuestions);
+  const pct = Math.min(100, Math.round(((qIndex)/denom)*100));
+  $('hudBar').style.width = pct + '%';
+}
+
+function startMode(m) {
+  mode = m;
+  setSubtitle();
+  resetRun();
+  show('game');
+
+  questionQueue = buildQueueForMode();
+  if (mode === 'countdown') {
+    $('hudTime').textContent = timeLeft;
+    clearInterval(timer);
+    timer = setInterval(()=>{
+      timeLeft -= 1;
+      $('hudTime').textContent = timeLeft;
+      if (timeLeft <= 0) {
+        clearInterval(timer);
+        finishRun('Tiempo terminado');
+      }
+    }, 1000);
+  } else {
+    clearInterval(timer);
+    timer = null;
+  }
+
+  nextQuestion();
+}
+
+function nextQuestion() {
+  answered = false;
+  used5050ThisQ = false;
+  $('feedback').classList.add('hidden');
+  $('btnNext').classList.add('hidden');
+  $('btnFinish').classList.add('hidden');
+  $('btn5050').disabled = (lifelines<=0);
+  $('btnSkip').disabled = false;
+
+  topUpQueueIfNeeded();
+  currentQuestion = questionQueue[qIndex];
+  if (!currentQuestion) {
+    finishRun('Fin');
+    return;
+  }
+
+  $('flagBox').classList.toggle('hidden', currentQuestion.type!=='flags');
+  if (currentQuestion.type==='flags') $('flagBox').textContent = currentQuestion.flag;
+
+  $('qTitle').textContent = currentQuestion.prompt;
+
+  const opts = $('options');
+  opts.innerHTML = '';
+  currentQuestion.options.forEach((txt, idx)=>{
+    const b = document.createElement('div');
+    b.className = 'opt';
+    b.innerHTML = `<span>${txt}</span><small>${['A','B','C','D'][idx]}</small>`;
+    b.onclick = ()=>chooseAnswer(b, txt);
+    opts.appendChild(b);
   });
-  bar.style.width=(i/pool.length*100)+"%";
+
+  updateHUD();
 }
 
-function answer(el,ok){
-  if(ok){el.classList.add("correct");score+=10}
-  else{el.classList.add("wrong");if(mode!=="test")lives--;feedback.textContent="Correct: "+pool[i].a;feedback.classList.remove("hidden")}
-  nextBtn.classList.remove("hidden");
+function lockOptions() {
+  [...document.querySelectorAll('.opt')].forEach(el=>el.onclick=null);
 }
-nextBtn.onclick=()=>{i++;load()};
+
+function chooseAnswer(el, choice) {
+  if (answered) return;
+  answered = true;
+  lockOptions();
+
+  const correct = currentQuestion.correct;
+  const ok = (choice === correct);
+
+  if (ok) {
+    el.classList.add('correct');
+    streak += 1;
+    score += 10 + Math.min(10, streak);
+    if (mode==='countdown') timeLeft += 2;
+    vibrate(20);
+    sfxCorrect();
+    $('feedback').innerHTML = `✅ Correcto <span class="muted">${currentQuestion.correctMeta || ''}</span>`;
+  } else {
+    el.classList.add('wrong');
+    [...document.querySelectorAll('.opt')].forEach(o=>{
+      const val = o.querySelector('span').textContent;
+      if (val === correct) o.classList.add('correct');
+    });
+    streak = 0;
+    lives -= 1;
+    vibrate([30,40,30]);
+    sfxWrong();
+    $('feedback').innerHTML = `❌ Incorrecto. <span class="muted">La respuesta correcta es:</span><br><strong>${correct}</strong>`;
+  }
+
+  $('feedback').classList.remove('hidden');
+  updateHUD();
+
+  if (mode==='test') {
+    testReview.push({
+      prompt: currentQuestion.prompt,
+      correct: correct,
+      chosen: choice,
+      ok: ok,
+      meta: currentQuestion.correctMeta || ''
+    });
+  }
+
+  const lastInTest = (mode==='test' && qIndex === totalQuestions-1);
+  if (lastInTest || (lives<=0 && mode!=='test')) {
+    $('btnFinish').classList.remove('hidden');
+  } else {
+    $('btnNext').classList.remove('hidden');
+  }
+}
+
+function apply5050() {
+  if (answered) return;
+  if (lifelines<=0) return;
+  if (used5050ThisQ) return;
+
+  const correct = currentQuestion.correct;
+  const els = [...document.querySelectorAll('.opt')];
+  const wrongEls = els.filter(el=>el.querySelector('span').textContent !== correct);
+  const remove = sample(wrongEls, 2);
+  remove.forEach(el=>{
+    el.style.opacity = .35;
+    el.style.pointerEvents = 'none';
+  });
+  used5050ThisQ = true;
+  lifelines -= 1;
+  vibrate([40]);
+  toast('50/50 usado');
+  updateHUD();
+  $('btn5050').disabled = (lifelines<=0);
+}
+
+function skipQuestion() {
+  if (answered) return;
+  streak = 0;
+  score = Math.max(0, score - 2);
+  vibrate(15);
+
+  if (mode==='test') {
+    testReview.push({
+      prompt: currentQuestion.prompt,
+      correct: currentQuestion.correct,
+      chosen: '(sin respuesta)',
+      ok: false,
+      meta: currentQuestion.correctMeta || ''
+    });
+  }
+
+  qIndex += 1;
+  if (mode==='test' && qIndex>=totalQuestions) {
+    finishRun('TEST terminado');
+    return;
+  }
+  nextQuestion();
+}
+
+function finishRun(reason='Fin') {
+  clearInterval(timer);
+  timer = null;
+  show('results');
+
+  if (mode==='test') {
+    const correctN = testReview.filter(x=>x.ok).length;
+    const pct = Math.round((correctN / totalQuestions)*100);
+    const grade = pct>=70 ? '✅ APROBADO' : '❌ NO APROBADO';
+    $('resultsSummary').innerHTML = `<strong>${grade}</strong> • ${correctN}/${totalQuestions} correctas • Puntaje: <strong>${score}</strong>`;
+    renderReviewList(testReview);
+  } else {
+    $('resultsSummary').innerHTML = `${reason} • Puntaje: <strong>${score}</strong>`;
+    $('resultsList').innerHTML = '';
+  }
+
+  vibrate([80,40,80]);
+  sfxFinish();
+}
+
+function renderReviewList(items) {
+  const box = $('resultsList');
+  box.innerHTML = '';
+  items.forEach((it, idx)=>{
+    const div = document.createElement('div');
+    div.className = 'feedback';
+    div.innerHTML = `
+      <div style="display:flex;justify-content:space-between;gap:10px;align-items:flex-start">
+        <div style="font-weight:950">${idx+1}. ${it.prompt}</div>
+        <div>${it.ok ? '✅' : '❌'}</div>
+      </div>
+      <div class="muted" style="margin-top:6px">Tu respuesta: <strong>${it.chosen}</strong></div>
+      <div class="muted">Correcta: <strong>${it.correct}</strong></div>
+    `;
+    box.appendChild(div);
+  });
+}
+
+/* ---------- Wire UI ---------- */
+$('menuBtn').onclick = ()=>{
+  clearInterval(timer); timer=null;
+  show('menu');
+  setSubtitle();
+  updateHUD();
+};
+document.querySelectorAll('.card[data-mode]').forEach(el=>{
+  el.onclick = ()=>{
+    const m = el.getAttribute('data-mode');
+    if (m==='test') {
+      show('testSetup');
+      setSubtitle();
+      return;
+    }
+    startMode(m);
+  };
+});
+
+$('btnNext').onclick = ()=>{ qIndex += 1; nextQuestion(); };
+$('btnFinish').onclick = ()=>{ finishRun('Terminado'); };
+$('btn5050').onclick = apply5050;
+$('btnSkip').onclick = skipQuestion;
+
+$('backToMenu1').onclick = ()=>show('menu');
+$('backToMenu2').onclick = ()=>show('menu');
+$('playAgain').onclick = ()=>{
+  if (mode==='test') show('testSetup');
+  else startMode(mode);
+};
+
+/* TEST setup controls */
+const counts = [10, 20, 30, 40, 50];
+counts.forEach(n=>{
+  const p = document.createElement('div');
+  p.className = 'pill' + (n===testCount ? ' active':'');
+  p.textContent = `${n} preguntas`;
+  p.onclick = ()=>{
+    testCount = n;
+    [...$('testCounts').children].forEach(ch=>ch.classList.remove('active'));
+    p.classList.add('active');
+  };
+  $('testCounts').appendChild(p);
+});
+$('testIncludeFlags').onclick = ()=>{
+  testIncludeFlags = !testIncludeFlags;
+  $('testIncludeFlags').textContent = `🚩 Incluir banderas: ${testIncludeFlags ? 'SÍ':'NO'}`;
+};
+$('startTestBtn').onclick = ()=>{
+  mode = 'test';
+  setSubtitle();
+  resetRun();
+  show('game');
+  totalQuestions = testCount;
+  questionQueue = buildQueueForMode();
+  nextQuestion();
+};
+
+/* Settings toggles */
+$('toggleSound').onclick = ()=>{
+  settings.sound = !settings.sound;
+  $('toggleSound').textContent = settings.sound ? '🔊 Sonido: ON' : '🔇 Sonido: OFF';
+  toast(settings.sound ? 'Sonido activado' : 'Sonido desactivado');
+};
+$('toggleHaptics').onclick = ()=>{
+  settings.haptics = !settings.haptics;
+  $('toggleHaptics').textContent = settings.haptics ? '📳 Haptic: ON' : '📴 Haptic: OFF';
+  toast(settings.haptics ? 'Haptic activado' : 'Haptic desactivado');
+};
+
+/* Init */
+setSubtitle();
+updateHUD();
+show('menu');
 </script>
-</div>
 </body>
 </html>
+
