@@ -1,0 +1,686 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>Geography Trainer</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<style>
+  body{margin:0;font-family:system-ui,-apple-system,BlinkMacSystemFont;background:linear-gradient(180deg,#e8f0ff,#fff)}
+  #app{max-width:420px;margin:auto;padding:14px 14px 28px}
+  .topbar{position:sticky;top:0;z-index:20;background:rgba(232,240,255,.92);backdrop-filter:blur(10px);
+    border-bottom:1px solid rgba(0,0,0,.06);border-radius:0 0 14px 14px;padding:10px 10px 12px;margin-bottom:10px}
+  .topbarRow{display:flex;align-items:center;justify-content:space-between;gap:10px}
+  .brand{font-weight:950;font-size:16px;display:flex;align-items:center;gap:8px}
+  .menuBtn{border:none;cursor:pointer;border-radius:12px;padding:10px 12px;background:#fff;box-shadow:0 6px 16px rgba(0,0,0,.08);font-weight:900}
+  .menuBtn:active{transform:scale(.98)}
+  .status{display:flex;justify-content:space-between;margin-top:10px;font-weight:900;flex-wrap:wrap;gap:8px}
+  .statusItem{white-space:nowrap}
+  .progress{height:10px;background:#ddd;border-radius:20px;overflow:hidden;margin:10px 0 0}
+  .progress div{height:100%;background:#4caf50;width:0%;transition:width .2s ease}
+  .card{background:#fff;border-radius:16px;padding:20px;box-shadow:0 10px 25px rgba(0,0,0,.1)}
+  .menuTitle{font-size:18px;font-weight:950;margin:0 0 8px}
+  .menuText{margin:0 0 16px;color:rgba(0,0,0,.72);line-height:1.35;font-size:14px}
+  .pill{display:inline-block;background:#eef5ff;border:1px solid rgba(31,111,235,.18);padding:6px 10px;border-radius:999px;font-weight:950;font-size:12px;color:#1f6feb}
+  .question{font-size:18px;margin-bottom:12px;line-height:1.25;font-weight:950}
+  .questionFlag{font-size:64px;text-align:center;margin:6px 0 14px;filter:drop-shadow(0 6px 10px rgba(0,0,0,.08))}
+  .lifelineRow{display:flex;gap:10px;margin:10px 0 14px}
+  .lifelineBtn{flex:1;border:none;cursor:pointer;border-radius:12px;padding:12px;background:#111;color:#fff;font-weight:950;font-size:14px}
+  .lifelineBtn:disabled{opacity:.45;cursor:not-allowed}
+  .lifelineBtn:active{transform:scale(.99)}
+  .option{background:#f2f2f2;padding:12px;border-radius:12px;margin-bottom:10px;cursor:pointer;transition:.15s;user-select:none;font-weight:800}
+  .option:hover{background:#e6e6e6}
+  .option.correct{background:#b6f2c2}
+  .option.wrong{background:#f2b6b6}
+  .feedback{margin-top:12px;border-radius:12px;padding:12px;background:#f6f8ff;border:1px solid rgba(31,111,235,.14);font-weight:900;line-height:1.25}
+  .feedback.good{background:#f1fff4;border-color:rgba(76,175,80,.25)}
+  .feedback.bad{background:#fff3f3;border-color:rgba(244,67,54,.22)}
+  button.primary{width:100%;padding:12px;border:none;border-radius:12px;background:#4caf50;color:#fff;font-size:16px;cursor:pointer;font-weight:950}
+  button.secondary{width:100%;padding:12px;border:none;border-radius:12px;background:#1f6feb;color:#fff;font-size:16px;cursor:pointer;font-weight:950;margin-bottom:10px}
+  button.ghost{width:100%;padding:12px;border:none;border-radius:12px;background:#eef1f6;color:#111;font-size:16px;cursor:pointer;font-weight:950;margin-bottom:10px}
+  .hidden{display:none}
+</style>
+</head>
+
+<body>
+<div id="app">
+
+  <div class="topbar">
+    <div class="topbarRow">
+      <div class="brand">🌍 Geography Trainer</div>
+      <button id="mainMenuBtn" class="menuBtn">🏠 Main Menu</button>
+    </div>
+
+    <div class="status">
+      <div class="statusItem">❤️ Lives: <span id="lives">3</span></div>
+      <div class="statusItem">⏱️ Time: <span id="time">--</span></div>
+      <div class="statusItem">🛟 50/50: <span id="lifelinesHud">3</span></div>
+      <div class="statusItem">🏆 Score: <span id="score">0</span></div>
+    </div>
+
+    <div class="progress"><div id="bar"></div></div>
+  </div>
+
+  <!-- MENU -->
+  <div id="menuScreen" class="card">
+    <p class="menuTitle">Main Menu</p>
+    <p class="menuText">
+      Trains exactly what the teacher evaluates: <b>capitals, flags, languages, nationalities, government, economy</b>.
+      <br><br>
+      <span class="pill">Dataset: 110 countries (every mode)</span>
+    </p>
+
+    <button id="classicBtn" class="secondary">Classic Practice (Lives)</button>
+    <button id="countdownBtn" class="ghost">Countdown Mode (60s, +2s per correct)</button>
+    <button id="flagsBtn" class="ghost">Flag Match (Pick the country)</button>
+  </div>
+
+  <!-- GAME -->
+  <div id="gameScreen" class="card hidden">
+    <div id="flagBlock" class="hidden">
+      <div class="questionFlag" id="flagEmoji">🏳️</div>
+    </div>
+
+    <div class="question" id="question"></div>
+
+    <div class="lifelineRow">
+      <button id="lifelineBtn" class="lifelineBtn">🛟 50/50 (3)</button>
+    </div>
+
+    <div id="options"></div>
+    <div id="feedback" class="feedback hidden"></div>
+    <button id="next" class="primary hidden">Next</button>
+  </div>
+
+</div>
+
+<script>
+/* =========================
+   110-COUNTRY DATASET
+   Fields: code, name, capital, language, demonym, government, economy
+   (Economy is an example category, not exhaustive.)
+   ========================= */
+const COUNTRIES = [
+  // Americas
+  {code:"US",name:"United States",capital:"Washington, D.C.",language:"English",demonym:"American",government:"Federal republic",economy:"Technology & services"},
+  {code:"CA",name:"Canada",capital:"Ottawa",language:"English & French",demonym:"Canadian",government:"Constitutional monarchy",economy:"Energy & services"},
+  {code:"MX",name:"Mexico",capital:"Mexico City",language:"Spanish",demonym:"Mexican",government:"Federal republic",economy:"Manufacturing & oil"},
+  {code:"GT",name:"Guatemala",capital:"Guatemala City",language:"Spanish",demonym:"Guatemalan",government:"Republic",economy:"Coffee & agriculture"},
+  {code:"HN",name:"Honduras",capital:"Tegucigalpa",language:"Spanish",demonym:"Honduran",government:"Republic",economy:"Agriculture & textiles"},
+  {code:"SV",name:"El Salvador",capital:"San Salvador",language:"Spanish",demonym:"Salvadoran",government:"Republic",economy:"Services & manufacturing"},
+  {code:"NI",name:"Nicaragua",capital:"Managua",language:"Spanish",demonym:"Nicaraguan",government:"Republic",economy:"Agriculture"},
+  {code:"CR",name:"Costa Rica",capital:"San José",language:"Spanish",demonym:"Costa Rican",government:"Republic",economy:"Services & tourism"},
+  {code:"PA",name:"Panama",capital:"Panama City",language:"Spanish",demonym:"Panamanian",government:"Republic",economy:"Canal & services"},
+  {code:"CU",name:"Cuba",capital:"Havana",language:"Spanish",demonym:"Cuban",government:"One-party state",economy:"Tourism & services"},
+  {code:"DO",name:"Dominican Republic",capital:"Santo Domingo",language:"Spanish",demonym:"Dominican",government:"Republic",economy:"Tourism"},
+  {code:"JM",name:"Jamaica",capital:"Kingston",language:"English",demonym:"Jamaican",government:"Constitutional monarchy",economy:"Tourism"},
+  {code:"CO",name:"Colombia",capital:"Bogotá",language:"Spanish",demonym:"Colombian",government:"Republic",economy:"Oil, coffee"},
+  {code:"VE",name:"Venezuela",capital:"Caracas",language:"Spanish",demonym:"Venezuelan",government:"Republic",economy:"Oil"},
+  {code:"EC",name:"Ecuador",capital:"Quito",language:"Spanish",demonym:"Ecuadorian",government:"Republic",economy:"Oil & agriculture"},
+  {code:"PE",name:"Peru",capital:"Lima",language:"Spanish",demonym:"Peruvian",government:"Republic",economy:"Mining"},
+  {code:"BO",name:"Bolivia",capital:"Sucre (official) / La Paz (seat)",language:"Spanish",demonym:"Bolivian",government:"Republic",economy:"Mining & gas"},
+  {code:"CL",name:"Chile",capital:"Santiago",language:"Spanish",demonym:"Chilean",government:"Republic",economy:"Mining (copper)"},
+  {code:"AR",name:"Argentina",capital:"Buenos Aires",language:"Spanish",demonym:"Argentine",government:"Federal republic",economy:"Agriculture & industry"},
+  {code:"UY",name:"Uruguay",capital:"Montevideo",language:"Spanish",demonym:"Uruguayan",government:"Republic",economy:"Services & agriculture"},
+  {code:"PY",name:"Paraguay",capital:"Asunción",language:"Spanish & Guaraní",demonym:"Paraguayan",government:"Republic",economy:"Agriculture & hydroelectric"},
+  {code:"BR",name:"Brazil",capital:"Brasília",language:"Portuguese",demonym:"Brazilian",government:"Federal republic",economy:"Coffee & soybeans"},
+  {code:"GY",name:"Guyana",capital:"Georgetown",language:"English",demonym:"Guyanese",government:"Republic",economy:"Oil & mining"},
+  {code:"SR",name:"Suriname",capital:"Paramaribo",language:"Dutch",demonym:"Surinamese",government:"Republic",economy:"Mining"},
+  {code:"TT",name:"Trinidad & Tobago",capital:"Port of Spain",language:"English",demonym:"Trinidadian and Tobagonian",government:"Republic",economy:"Oil & gas"},
+
+  // Europe
+  {code:"GB",name:"United Kingdom",capital:"London",language:"English",demonym:"British",government:"Constitutional monarchy",economy:"Finance & services"},
+  {code:"IE",name:"Ireland",capital:"Dublin",language:"English & Irish",demonym:"Irish",government:"Republic",economy:"Technology & services"},
+  {code:"FR",name:"France",capital:"Paris",language:"French",demonym:"French",government:"Republic",economy:"Industry & services"},
+  {code:"ES",name:"Spain",capital:"Madrid",language:"Spanish",demonym:"Spanish",government:"Constitutional monarchy",economy:"Tourism & services"},
+  {code:"PT",name:"Portugal",capital:"Lisbon",language:"Portuguese",demonym:"Portuguese",government:"Republic",economy:"Tourism & services"},
+  {code:"DE",name:"Germany",capital:"Berlin",language:"German",demonym:"German",government:"Federal republic",economy:"Manufacturing"},
+  {code:"NL",name:"Netherlands",capital:"Amsterdam",language:"Dutch",demonym:"Dutch",government:"Constitutional monarchy",economy:"Trade & services"},
+  {code:"BE",name:"Belgium",capital:"Brussels",language:"Dutch, French, German",demonym:"Belgian",government:"Constitutional monarchy",economy:"Industry & services"},
+  {code:"LU",name:"Luxembourg",capital:"Luxembourg",language:"Luxembourgish, French, German",demonym:"Luxembourger",government:"Constitutional monarchy",economy:"Finance"},
+  {code:"CH",name:"Switzerland",capital:"Bern",language:"German, French, Italian, Romansh",demonym:"Swiss",government:"Federal republic",economy:"Finance & pharma"},
+  {code:"IT",name:"Italy",capital:"Rome",language:"Italian",demonym:"Italian",government:"Republic",economy:"Manufacturing"},
+  {code:"AT",name:"Austria",capital:"Vienna",language:"German",demonym:"Austrian",government:"Republic",economy:"Industry & services"},
+  {code:"DK",name:"Denmark",capital:"Copenhagen",language:"Danish",demonym:"Danish",government:"Constitutional monarchy",economy:"Services"},
+  {code:"SE",name:"Sweden",capital:"Stockholm",language:"Swedish",demonym:"Swedish",government:"Constitutional monarchy",economy:"Manufacturing & tech"},
+  {code:"NO",name:"Norway",capital:"Oslo",language:"Norwegian",demonym:"Norwegian",government:"Constitutional monarchy",economy:"Oil & gas"},
+  {code:"FI",name:"Finland",capital:"Helsinki",language:"Finnish & Swedish",demonym:"Finnish",government:"Republic",economy:"Technology"},
+  {code:"IS",name:"Iceland",capital:"Reykjavík",language:"Icelandic",demonym:"Icelandic",government:"Republic",economy:"Fishing & tourism"},
+  {code:"PL",name:"Poland",capital:"Warsaw",language:"Polish",demonym:"Polish",government:"Republic",economy:"Manufacturing"},
+  {code:"CZ",name:"Czechia",capital:"Prague",language:"Czech",demonym:"Czech",government:"Republic",economy:"Manufacturing"},
+  {code:"SK",name:"Slovakia",capital:"Bratislava",language:"Slovak",demonym:"Slovak",government:"Republic",economy:"Manufacturing"},
+  {code:"HU",name:"Hungary",capital:"Budapest",language:"Hungarian",demonym:"Hungarian",government:"Republic",economy:"Manufacturing"},
+  {code:"RO",name:"Romania",capital:"Bucharest",language:"Romanian",demonym:"Romanian",government:"Republic",economy:"Industry"},
+  {code:"BG",name:"Bulgaria",capital:"Sofia",language:"Bulgarian",demonym:"Bulgarian",government:"Republic",economy:"Industry"},
+  {code:"GR",name:"Greece",capital:"Athens",language:"Greek",demonym:"Greek",government:"Republic",economy:"Tourism & shipping"},
+  {code:"HR",name:"Croatia",capital:"Zagreb",language:"Croatian",demonym:"Croatian",government:"Republic",economy:"Tourism"},
+  {code:"RS",name:"Serbia",capital:"Belgrade",language:"Serbian",demonym:"Serbian",government:"Republic",economy:"Industry"},
+  {code:"BA",name:"Bosnia and Herzegovina",capital:"Sarajevo",language:"Bosnian/Croatian/Serbian",demonym:"Bosnian",government:"Republic",economy:"Industry"},
+  {code:"AL",name:"Albania",capital:"Tirana",language:"Albanian",demonym:"Albanian",government:"Republic",economy:"Services"},
+  {code:"MK",name:"North Macedonia",capital:"Skopje",language:"Macedonian",demonym:"Macedonian",government:"Republic",economy:"Services"},
+  {code:"SI",name:"Slovenia",capital:"Ljubljana",language:"Slovene",demonym:"Slovene",government:"Republic",economy:"Industry"},
+  {code:"UA",name:"Ukraine",capital:"Kyiv",language:"Ukrainian",demonym:"Ukrainian",government:"Republic",economy:"Agriculture"},
+  {code:"RU",name:"Russia",capital:"Moscow",language:"Russian",demonym:"Russian",government:"Federation",economy:"Oil & gas"},
+  {code:"TR",name:"Turkey",capital:"Ankara",language:"Turkish",demonym:"Turkish",government:"Republic",economy:"Manufacturing"},
+  {code:"AD",name:"Andorra",capital:"Andorra la Vella",language:"Catalan",demonym:"Andorran",government:"Co-principality",economy:"Tourism"},
+  {code:"MC",name:"Monaco",capital:"Monaco",language:"French",demonym:"Monegasque",government:"Constitutional monarchy",economy:"Finance & tourism"},
+  {code:"SM",name:"San Marino",capital:"San Marino",language:"Italian",demonym:"Sammarinese",government:"Republic",economy:"Tourism"},
+  {code:"VA",name:"Vatican City",capital:"Vatican City",language:"Italian/Latin",demonym:"Vatican",government:"Theocracy",economy:"Tourism"},
+  {code:"MD",name:"Moldova",capital:"Chișinău",language:"Romanian",demonym:"Moldovan",government:"Republic",economy:"Agriculture"},
+
+  // Africa
+  {code:"MA",name:"Morocco",capital:"Rabat",language:"Arabic",demonym:"Moroccan",government:"Constitutional monarchy",economy:"Tourism & agriculture"},
+  {code:"DZ",name:"Algeria",capital:"Algiers",language:"Arabic",demonym:"Algerian",government:"Republic",economy:"Oil & gas"},
+  {code:"TN",name:"Tunisia",capital:"Tunis",language:"Arabic",demonym:"Tunisian",government:"Republic",economy:"Tourism"},
+  {code:"EG",name:"Egypt",capital:"Cairo",language:"Arabic",demonym:"Egyptian",government:"Republic",economy:"Tourism & services"},
+  {code:"NG",name:"Nigeria",capital:"Abuja",language:"English",demonym:"Nigerian",government:"Federal republic",economy:"Oil"},
+  {code:"GH",name:"Ghana",capital:"Accra",language:"English",demonym:"Ghanaian",government:"Republic",economy:"Cocoa & gold"},
+  {code:"CI",name:"Côte d’Ivoire",capital:"Yamoussoukro",language:"French",demonym:"Ivorian",government:"Republic",economy:"Cocoa"},
+  {code:"SN",name:"Senegal",capital:"Dakar",language:"French",demonym:"Senegalese",government:"Republic",economy:"Fishing & services"},
+  {code:"ET",name:"Ethiopia",capital:"Addis Ababa",language:"Amharic",demonym:"Ethiopian",government:"Federation",economy:"Agriculture"},
+  {code:"KE",name:"Kenya",capital:"Nairobi",language:"Swahili & English",demonym:"Kenyan",government:"Republic",economy:"Agriculture & tourism"},
+  {code:"TZ",name:"Tanzania",capital:"Dodoma",language:"Swahili",demonym:"Tanzanian",government:"Republic",economy:"Tourism & agriculture"},
+  {code:"UG",name:"Uganda",capital:"Kampala",language:"English & Swahili",demonym:"Ugandan",government:"Republic",economy:"Agriculture"},
+  {code:"RW",name:"Rwanda",capital:"Kigali",language:"Kinyarwanda, English, French",demonym:"Rwandan",government:"Republic",economy:"Services"},
+  {code:"ZA",name:"South Africa",capital:"Pretoria",language:"English & others",demonym:"South African",government:"Republic",economy:"Mining"},
+  {code:"AO",name:"Angola",capital:"Luanda",language:"Portuguese",demonym:"Angolan",government:"Republic",economy:"Oil"},
+  {code:"MZ",name:"Mozambique",capital:"Maputo",language:"Portuguese",demonym:"Mozambican",government:"Republic",economy:"Agriculture & gas"},
+  {code:"ZW",name:"Zimbabwe",capital:"Harare",language:"English & others",demonym:"Zimbabwean",government:"Republic",economy:"Mining"},
+  {code:"ZM",name:"Zambia",capital:"Lusaka",language:"English",demonym:"Zambian",government:"Republic",economy:"Mining (copper)"},
+  {code:"NA",name:"Namibia",capital:"Windhoek",language:"English",demonym:"Namibian",government:"Republic",economy:"Mining"},
+  {code:"BW",name:"Botswana",capital:"Gaborone",language:"English",demonym:"Motswana",government:"Republic",economy:"Diamonds"},
+  {code:"MG",name:"Madagascar",capital:"Antananarivo",language:"Malagasy & French",demonym:"Malagasy",government:"Republic",economy:"Agriculture"},
+  {code:"SD",name:"Sudan",capital:"Khartoum",language:"Arabic",demonym:"Sudanese",government:"Republic",economy:"Agriculture"},
+  {code:"CM",name:"Cameroon",capital:"Yaoundé",language:"French & English",demonym:"Cameroonian",government:"Republic",economy:"Oil & agriculture"},
+  {code:"CD",name:"DR Congo",capital:"Kinshasa",language:"French",demonym:"Congolese",government:"Republic",economy:"Mining"},
+  {code:"TZ",name:"Tanzania",capital:"Dodoma",language:"Swahili",demonym:"Tanzanian",government:"Republic",economy:"Tourism & agriculture"},
+
+  // Middle East / Asia
+  {code:"SA",name:"Saudi Arabia",capital:"Riyadh",language:"Arabic",demonym:"Saudi",government:"Absolute monarchy",economy:"Oil"},
+  {code:"AE",name:"United Arab Emirates",capital:"Abu Dhabi",language:"Arabic",demonym:"Emirati",government:"Federation",economy:"Oil & services"},
+  {code:"QA",name:"Qatar",capital:"Doha",language:"Arabic",demonym:"Qatari",government:"Monarchy",economy:"Gas"},
+  {code:"KW",name:"Kuwait",capital:"Kuwait City",language:"Arabic",demonym:"Kuwaiti",government:"Monarchy",economy:"Oil"},
+  {code:"OM",name:"Oman",capital:"Muscat",language:"Arabic",demonym:"Omani",government:"Monarchy",economy:"Oil & services"},
+  {code:"IL",name:"Israel",capital:"Jerusalem",language:"Hebrew",demonym:"Israeli",government:"Republic",economy:"Technology"},
+  {code:"JO",name:"Jordan",capital:"Amman",language:"Arabic",demonym:"Jordanian",government:"Constitutional monarchy",economy:"Services"},
+  {code:"LB",name:"Lebanon",capital:"Beirut",language:"Arabic",demonym:"Lebanese",government:"Republic",economy:"Services"},
+  {code:"IR",name:"Iran",capital:"Tehran",language:"Farsi",demonym:"Iranian",government:"Republic",economy:"Oil & gas"},
+  {code:"IQ",name:"Iraq",capital:"Baghdad",language:"Arabic",demonym:"Iraqi",government:"Republic",economy:"Oil"},
+  {code:"AF",name:"Afghanistan",capital:"Kabul",language:"Dari and Pashto",demonym:"Afghan",government:"Republic",economy:"Agriculture"},
+  {code:"PK",name:"Pakistan",capital:"Islamabad",language:"Urdu",demonym:"Pakistani",government:"Republic",economy:"Textiles"},
+  {code:"IN",name:"India",capital:"New Delhi",language:"Hindi & English",demonym:"Indian",government:"Federal republic",economy:"Services & IT"},
+  {code:"BD",name:"Bangladesh",capital:"Dhaka",language:"Bengali",demonym:"Bangladeshi",government:"Republic",economy:"Textiles"},
+  {code:"NP",name:"Nepal",capital:"Kathmandu",language:"Nepali",demonym:"Nepali",government:"Federal republic",economy:"Tourism"},
+  {code:"LK",name:"Sri Lanka",capital:"Sri Jayawardenepura Kotte",language:"Sinhala & Tamil",demonym:"Sri Lankan",government:"Republic",economy:"Tea"},
+  {code:"TH",name:"Thailand",capital:"Bangkok",language:"Thai",demonym:"Thai",government:"Constitutional monarchy",economy:"Tourism"},
+  {code:"VN",name:"Vietnam",capital:"Hanoi",language:"Vietnamese",demonym:"Vietnamese",government:"One-party state",economy:"Manufacturing"},
+  {code:"SG",name:"Singapore",capital:"Singapore",language:"English, Malay, Chinese, Tamil",demonym:"Singaporean",government:"Republic",economy:"Finance & trade"},
+  {code:"MY",name:"Malaysia",capital:"Kuala Lumpur",language:"Malay",demonym:"Malaysian",government:"Constitutional monarchy",economy:"Manufacturing"},
+  {code:"ID",name:"Indonesia",capital:"Jakarta",language:"Indonesian",demonym:"Indonesian",government:"Republic",economy:"Manufacturing"},
+  {code:"PH",name:"Philippines",capital:"Manila",language:"Filipino & English",demonym:"Filipino",government:"Republic",economy:"Services"},
+  {code:"CN",name:"China",capital:"Beijing",language:"Chinese (Mandarin)",demonym:"Chinese",government:"One-party state",economy:"Manufacturing"},
+  {code:"JP",name:"Japan",capital:"Tokyo",language:"Japanese",demonym:"Japanese",government:"Constitutional monarchy",economy:"Cars & electronics"},
+  {code:"KR",name:"South Korea",capital:"Seoul",language:"Korean",demonym:"South Korean",government:"Republic",economy:"Electronics"},
+  {code:"KP",name:"North Korea",capital:"Pyongyang",language:"Korean",demonym:"North Korean",government:"One-party state",economy:"Industry"},
+  {code:"MN",name:"Mongolia",capital:"Ulaanbaatar",language:"Mongolian",demonym:"Mongolian",government:"Republic",economy:"Mining"},
+  {code:"KZ",name:"Kazakhstan",capital:"Astana",language:"Kazakh & Russian",demonym:"Kazakhstani",government:"Republic",economy:"Oil & mining"},
+  {code:"UZ",name:"Uzbekistan",capital:"Tashkent",language:"Uzbek",demonym:"Uzbekistani",government:"Republic",economy:"Cotton"},
+  {code:"AU",name:"Australia",capital:"Canberra",language:"English",demonym:"Australian",government:"Constitutional monarchy",economy:"Mining"},
+  {code:"NZ",name:"New Zealand",capital:"Wellington",language:"English",demonym:"New Zealander",government:"Constitutional monarchy",economy:"Agriculture"},
+];
+
+/* Deduplicate (in case of accidental repeats) */
+const byName = new Map();
+for (const c of COUNTRIES) byName.set(c.name, c);
+const COUNTRY_DATA = Array.from(byName.values());
+const COUNTRY_COUNT = COUNTRY_DATA.length;
+
+/* =========================
+   UTILS
+   ========================= */
+function shuffle(arr){ return arr.sort(()=>Math.random() - 0.5); }
+function clamp(n, min, max){ return Math.max(min, Math.min(max, n)); }
+
+function isoToFlagEmoji(iso2){
+  // ISO-2 to Regional Indicator Symbols (offline)
+  const code = iso2.toUpperCase();
+  const A = 0x1F1E6;
+  const first = code.charCodeAt(0) - 65 + A;
+  const second = code.charCodeAt(1) - 65 + A;
+  return String.fromCodePoint(first, second);
+}
+
+function sampleDistinct(arr, n, excludeSet = new Set()){
+  const pool = arr.filter(x => !excludeSet.has(x));
+  return shuffle(pool).slice(0, n);
+}
+
+/* =========================
+   QUESTION GENERATORS (from 110 countries)
+   ========================= */
+const TOPICS = ["capital","language","demonym","government","economy"];
+
+function makeQuestionFromCountry(country, topic){
+  const name = country.name;
+
+  if(topic === "capital"){
+    const correct = country.capital;
+    const distractors = sampleDistinct(
+      COUNTRY_DATA.map(c => c.capital),
+      3,
+      new Set([correct])
+    );
+    return {type:"mc", q:`What is the capital of ${name}?`, a:correct, o:distractors, meta:{topic, country:name}};
+  }
+
+  if(topic === "language"){
+    const correct = country.language;
+    const distractors = sampleDistinct(
+      COUNTRY_DATA.map(c => c.language),
+      3,
+      new Set([correct])
+    );
+    return {type:"mc", q:`What language is spoken in ${name}?`, a:correct, o:distractors, meta:{topic, country:name}};
+  }
+
+  if(topic === "demonym"){
+    const correct = country.demonym;
+    const distractors = sampleDistinct(
+      COUNTRY_DATA.map(c => c.demonym),
+      3,
+      new Set([correct])
+    );
+    return {type:"mc", q:`A person from ${name} is:`, a:correct, o:distractors, meta:{topic, country:name}};
+  }
+
+  if(topic === "government"){
+    const correct = country.government;
+    const distractors = sampleDistinct(
+      COUNTRY_DATA.map(c => c.government),
+      3,
+      new Set([correct])
+    );
+    return {type:"mc", q:`${name} has what type of government?`, a:correct, o:distractors, meta:{topic, country:name}};
+  }
+
+  // economy
+  const correct = country.economy;
+  const distractors = sampleDistinct(
+    COUNTRY_DATA.map(c => c.economy),
+    3,
+    new Set([correct])
+  );
+  return {type:"mc", q:`${name} is known for an economy based on:`, a:correct, o:distractors, meta:{topic, country:name}};
+}
+
+function buildMixedQuestionPool(){
+  // 110 countries * 5 topics = 550 questions
+  const pool = [];
+  for(const c of COUNTRY_DATA){
+    for(const t of TOPICS){
+      pool.push(makeQuestionFromCountry(c, t));
+    }
+  }
+  return shuffle(pool);
+}
+
+function makeFlagQuestion(){
+  const correctCountry = COUNTRY_DATA[Math.floor(Math.random() * COUNTRY_DATA.length)];
+  const correct = correctCountry.name;
+  const flag = isoToFlagEmoji(correctCountry.code);
+
+  const wrongs = sampleDistinct(
+    COUNTRY_DATA.map(c => c.name),
+    3,
+    new Set([correct])
+  );
+  return {type:"flag", flag, q:"Which country has this flag?", a:correct, o:wrongs, meta:{topic:"flag", country:correct}};
+}
+
+function buildFlagPool(n=120){
+  // ensures 100+ questions per run (even though 110 countries exist)
+  const pool = [];
+  for(let i=0;i<n;i++) pool.push(makeFlagQuestion());
+  return shuffle(pool);
+}
+
+/* =========================
+   STATE
+   ========================= */
+let mode = "classic"; // classic | countdown | flags
+let pool = [];
+let idx = 0;
+let score = 0;
+let lives = 3;
+let inGame = false;
+let answered = false;
+
+let timerId = null;
+let timeLeftMs = 0;
+
+let lifelinesLeft = 3;
+
+/* =========================
+   ELEMENTS
+   ========================= */
+const menuScreen = document.getElementById("menuScreen");
+const gameScreen = document.getElementById("gameScreen");
+const flagBlock = document.getElementById("flagBlock");
+const flagEmojiEl = document.getElementById("flagEmoji");
+
+const qEl = document.getElementById("question");
+const oEl = document.getElementById("options");
+const feedbackEl = document.getElementById("feedback");
+const nextBtn = document.getElementById("next");
+
+const bar = document.getElementById("bar");
+const livesEl = document.getElementById("lives");
+const scoreEl = document.getElementById("score");
+const timeEl  = document.getElementById("time");
+const lifelinesHud = document.getElementById("lifelinesHud");
+
+const mainMenuBtn = document.getElementById("mainMenuBtn");
+const classicBtn = document.getElementById("classicBtn");
+const countdownBtn = document.getElementById("countdownBtn");
+const flagsBtn = document.getElementById("flagsBtn");
+
+const lifelineBtn = document.getElementById("lifelineBtn");
+
+/* =========================
+   UI HELPERS
+   ========================= */
+function setHUD(){
+  livesEl.textContent = lives;
+  scoreEl.textContent = score;
+
+  if(mode === "countdown"){
+    const secs = Math.max(0, Math.ceil(timeLeftMs / 1000));
+    timeEl.textContent = secs + "s";
+  } else {
+    timeEl.textContent = "--";
+  }
+
+  lifelinesHud.textContent = lifelinesLeft;
+  lifelineBtn.textContent = `🛟 50/50 (${lifelinesLeft})`;
+}
+
+function setFeedback(type, html){
+  feedbackEl.classList.remove("hidden","good","bad");
+  feedbackEl.classList.add(type === "good" ? "good" : "bad");
+  feedbackEl.innerHTML = html;
+}
+function clearFeedback(){
+  feedbackEl.classList.add("hidden");
+  feedbackEl.classList.remove("good","bad");
+  feedbackEl.innerHTML = "";
+}
+
+function disableOptions(){
+  document.querySelectorAll(".option").forEach(o => o.onclick = null);
+}
+
+function showMenu(){
+  stopTimer();
+  menuScreen.classList.remove("hidden");
+  gameScreen.classList.add("hidden");
+  inGame = false;
+  answered = false;
+  bar.style.width = "0%";
+  clearFeedback();
+  nextBtn.classList.add("hidden");
+  flagBlock.classList.add("hidden");
+}
+
+function endGame(message){
+  stopTimer();
+  inGame = false;
+  answered = true;
+
+  qEl.innerHTML = message;
+  oEl.innerHTML = `<p style="margin:0;">Final Score: <b>${score}</b></p>`;
+
+  clearFeedback();
+  nextBtn.classList.add("hidden");
+  lifelineBtn.disabled = true;
+
+  if(mode !== "countdown") bar.style.width = "100%";
+}
+
+function buildOption(optText, isCorrect){
+  const d = document.createElement("div");
+  d.className = "option";
+  d.textContent = optText;
+  d.dataset.correct = isCorrect ? "1" : "0";
+  d.onclick = ()=>selectAnswer(d, isCorrect);
+  return d;
+}
+
+/* =========================
+   GAME START
+   ========================= */
+function resetRunCommon(){
+  idx = 0;
+  score = 0;
+  answered = false;
+  lifelinesLeft = 3;
+  lifelineBtn.disabled = false;
+  clearFeedback();
+  nextBtn.classList.add("hidden");
+}
+
+function startClassic(){
+  mode = "classic";
+  resetRunCommon();
+  lives = 3;
+  pool = buildMixedQuestionPool(); // 550 questions from 110 countries
+  inGame = true;
+
+  menuScreen.classList.add("hidden");
+  gameScreen.classList.remove("hidden");
+  flagBlock.classList.add("hidden");
+
+  setHUD();
+  loadQuestion();
+}
+
+function startCountdown(){
+  mode = "countdown";
+  resetRunCommon();
+  lives = 999; // not relevant here
+  pool = buildMixedQuestionPool(); // 550 questions
+  inGame = true;
+
+  timeLeftMs = 60000;
+
+  menuScreen.classList.add("hidden");
+  gameScreen.classList.remove("hidden");
+  flagBlock.classList.add("hidden");
+
+  setHUD();
+  loadQuestion();
+  startTimer();
+}
+
+function startFlags(){
+  mode = "flags";
+  resetRunCommon();
+  lives = 3;
+  pool = buildFlagPool(120); // 100+ questions per run
+  inGame = true;
+
+  menuScreen.classList.add("hidden");
+  gameScreen.classList.remove("hidden");
+
+  setHUD();
+  loadQuestion();
+}
+
+/* =========================
+   LOAD QUESTION
+   ========================= */
+function loadQuestion(){
+  if(!inGame) return;
+
+  clearFeedback();
+  nextBtn.classList.add("hidden");
+  answered = false;
+
+  lifelineBtn.disabled = (lifelinesLeft <= 0);
+
+  if((mode === "classic" || mode === "flags") && lives <= 0){
+    endGame("❌ Game Over");
+    return;
+  }
+
+  if(mode !== "countdown" && idx >= pool.length){
+    endGame("🎉 You finished!");
+    return;
+  }
+
+  if(mode === "countdown" && idx >= pool.length){
+    pool = buildMixedQuestionPool(); // keep going
+    idx = 0;
+  }
+
+  const q = pool[idx];
+
+  if(q.type === "flag"){
+    flagBlock.classList.remove("hidden");
+    flagEmojiEl.textContent = q.flag;
+  } else {
+    flagBlock.classList.add("hidden");
+  }
+
+  qEl.textContent = q.q;
+
+  oEl.innerHTML = "";
+  const opts = shuffle([q.a, ...q.o]);
+  opts.forEach(opt => oEl.appendChild(buildOption(opt, opt === q.a)));
+
+  if(mode === "classic" || mode === "flags"){
+    const progress = (idx / pool.length) * 100;
+    bar.style.width = progress + "%";
+  } else {
+    const pct = clamp((timeLeftMs / 60000) * 100, 0, 100);
+    bar.style.width = pct + "%";
+  }
+
+  setHUD();
+}
+
+/* =========================
+   ANSWER
+   ========================= */
+function selectAnswer(el, correct){
+  if(answered) return;
+  answered = true;
+
+  disableOptions();
+  lifelineBtn.disabled = true;
+
+  const q = pool[idx];
+
+  if(correct){
+    el.classList.add("correct");
+    score += 10;
+
+    if(mode === "countdown"){
+      timeLeftMs += 2000;
+      setFeedback("good", `✅ Correct! <b>+2 seconds</b>`);
+    } else {
+      setFeedback("good", `✅ Correct!`);
+    }
+  } else {
+    el.classList.add("wrong");
+
+    document.querySelectorAll(".option").forEach(optDiv=>{
+      if(optDiv.textContent === q.a) optDiv.classList.add("correct");
+    });
+
+    if(mode === "classic" || mode === "flags"){
+      lives -= 1;
+    }
+
+    setFeedback("bad", `❌ Not quite. The correct answer is: <b>${q.a}</b>`);
+  }
+
+  setHUD();
+  nextBtn.classList.remove("hidden");
+}
+
+nextBtn.onclick = ()=>{
+  if(!inGame) return;
+  idx++;
+  loadQuestion();
+};
+
+/* =========================
+   50/50 LIFELINE (3 per run)
+   Leaves: 1 correct + 1 wrong
+   ========================= */
+lifelineBtn.onclick = ()=>{
+  if(!inGame || answered || lifelinesLeft <= 0) return;
+
+  const optionDivs = Array.from(document.querySelectorAll(".option"));
+  if(optionDivs.length < 4) return;
+
+  const correctDiv = optionDivs.find(d => d.dataset.correct === "1");
+  const wrongDivs = optionDivs.filter(d => d.dataset.correct === "0");
+  const keepWrong = wrongDivs[Math.floor(Math.random() * wrongDivs.length)];
+  wrongDivs.filter(d => d !== keepWrong).forEach(d => d.remove());
+
+  lifelinesLeft -= 1;
+  setHUD();
+  lifelineBtn.disabled = (lifelinesLeft <= 0);
+};
+
+/* =========================
+   COUNTDOWN TIMER
+   ========================= */
+function startTimer(){
+  stopTimer();
+  timerId = setInterval(()=>{
+    if(!inGame || mode !== "countdown") return;
+
+    timeLeftMs -= 250;
+    if(timeLeftMs <= 0){
+      timeLeftMs = 0;
+      setHUD();
+      disableOptions();
+      endGame("⏱️ Time's up!");
+      return;
+    }
+
+    setHUD();
+    const pct = clamp((timeLeftMs / 60000) * 100, 0, 100);
+    bar.style.width = pct + "%";
+  }, 250);
+}
+
+function stopTimer(){
+  if(timerId){
+    clearInterval(timerId);
+    timerId = null;
+  }
+}
+
+/* =========================
+   NAV / MENU
+   ========================= */
+mainMenuBtn.onclick = ()=>{
+  if(inGame){
+    const ok = confirm("Leave the game and go back to Main Menu? Your current run will reset.");
+    if(!ok) return;
+  }
+  showMenu();
+};
+
+classicBtn.onclick = startClassic;
+countdownBtn.onclick = startCountdown;
+flagsBtn.onclick = startFlags;
+
+/* Boot */
+showMenu();
+setHUD();
+</script>
+</body>
+</html>
