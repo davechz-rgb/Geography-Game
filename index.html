@@ -1,117 +1,56 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
+<meta charset="UTF-8">
 <title>Geography Trainer</title>
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <style>
-/* ---------- SAME MODERN UI (unchanged) ---------- */
-:root{
-  --bg1:#0b1220; --bg2:#0e1a33;
-  --card:rgba(255,255,255,.08);
-  --stroke:rgba(255,255,255,.14);
-  --text:rgba(255,255,255,.92);
-  --muted:rgba(255,255,255,.7);
-  --accent:#67e8f9; --accent2:#a78bfa;
-  --good:#22c55e; --bad:#ef4444;
-  --shadow:0 18px 45px rgba(0,0,0,.35);
-}
-*{box-sizing:border-box}
 body{
-  margin:0;
-  font-family:system-ui,-apple-system,BlinkMacSystemFont;
-  color:var(--text);
-  background:
-    radial-gradient(1200px 600px at 15% 10%, rgba(103,232,249,.18), transparent 55%),
-    radial-gradient(900px 500px at 85% 20%, rgba(167,139,250,.18), transparent 55%),
-    linear-gradient(180deg,var(--bg1),var(--bg2));
+  margin:0;font-family:system-ui;
+  background:linear-gradient(180deg,#0b1220,#0e1a33);
+  color:#fff
 }
-#app{max-width:520px;margin:auto;padding:16px}
+#app{max-width:520px;margin:auto;padding:14px}
 .hidden{display:none}
+button{cursor:pointer}
 
-/* ---------- TOP BAR ---------- */
 .topbar{
-  position:sticky;top:0;z-index:10;
-  border-radius:22px;
-  padding:12px;
-  background:linear-gradient(180deg,rgba(255,255,255,.12),rgba(255,255,255,.06));
-  border:1px solid var(--stroke);
-  box-shadow:var(--shadow);
-  backdrop-filter:blur(14px);
-}
-.topRow{display:flex;justify-content:space-between;align-items:center}
-.menuBtn{
-  border:none;border-radius:14px;
-  padding:10px 14px;
+  position:sticky;top:0;
   background:rgba(255,255,255,.1);
-  color:var(--text);
-  font-weight:900;
-  cursor:pointer;
+  backdrop-filter:blur(12px);
+  padding:12px;border-radius:18px;
 }
-.stats{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
-.stat{padding:6px 10px;border-radius:999px;
-  background:rgba(255,255,255,.08);
-  border:1px solid var(--stroke);
-  font-weight:800;font-size:12px;
-}
-.progress{height:10px;margin-top:10px;border-radius:999px;
-  background:rgba(255,255,255,.08);overflow:hidden}
-.progress div{
-  height:100%;
-  background:linear-gradient(90deg,var(--accent),var(--accent2));
-  width:0%;
-}
+.stats{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
+.stat{padding:6px 10px;border-radius:999px;background:rgba(255,255,255,.15);font-size:12px;font-weight:800}
+.progress{height:10px;background:rgba(255,255,255,.15);border-radius:999px;overflow:hidden;margin-top:8px}
+.progress div{height:100%;background:linear-gradient(90deg,#67e8f9,#a78bfa);width:0%}
 
-/* ---------- PANELS ---------- */
 .panel{
-  margin-top:14px;
-  border-radius:20px;
-  background:linear-gradient(180deg,rgba(255,255,255,.10),rgba(255,255,255,.06));
-  border:1px solid var(--stroke);
-  box-shadow:var(--shadow);
-  padding:16px;
+  margin-top:14px;padding:16px;border-radius:18px;
+  background:rgba(255,255,255,.1)
 }
-.title{font-weight:1000;font-size:18px;margin-bottom:6px}
-.desc{color:var(--muted);font-size:14px;margin-bottom:14px}
-
-/* ---------- MENU ---------- */
-.grid{display:grid;gap:10px}
-.cardBtn{
-  padding:14px;border-radius:16px;
-  background:rgba(255,255,255,.08);
-  border:1px solid var(--stroke);
-  cursor:pointer;
-  display:flex;justify-content:space-between;align-items:center;
-  font-weight:900;
+.title{font-size:18px;font-weight:900}
+.grid{display:grid;gap:10px;margin-top:12px}
+.card{
+  padding:14px;border-radius:14px;
+  background:rgba(255,255,255,.15);
+  font-weight:900
 }
-.cardBtn:hover{background:rgba(255,255,255,.12)}
 
-/* ---------- GAME ---------- */
-.flag{font-size:70px;text-align:center;margin:10px 0}
-.question{font-weight:1000;font-size:18px;margin-bottom:12px}
-.options{display:grid;gap:10px}
 .option{
-  padding:14px;border-radius:16px;
-  background:rgba(255,255,255,.08);
-  border:1px solid var(--stroke);
-  cursor:pointer;font-weight:900;
+  padding:14px;border-radius:14px;
+  background:rgba(255,255,255,.15);
+  margin-bottom:8px;font-weight:900
 }
-.option.correct{background:rgba(34,197,94,.25)}
-.option.wrong{background:rgba(239,68,68,.25)}
-.lifeline{
-  width:100%;padding:12px;border-radius:16px;
-  background:rgba(255,255,255,.1);
-  border:1px solid var(--stroke);
-  font-weight:900;margin-bottom:10px;
-}
-.feedback{margin-top:10px;padding:12px;border-radius:16px;font-weight:900}
-.feedback.good{background:rgba(34,197,94,.25)}
-.feedback.bad{background:rgba(239,68,68,.25)}
-.nextBtn{
-  margin-top:12px;width:100%;
-  padding:14px;border-radius:16px;
-  border:none;font-weight:1000;
-  background:linear-gradient(90deg,var(--accent),var(--accent2));
+.correct{background:rgba(34,197,94,.6)}
+.wrong{background:rgba(239,68,68,.6)}
+.flag{font-size:64px;text-align:center}
+.feedback{margin-top:8px;font-weight:900}
+
+.primary{
+  width:100%;padding:14px;border-radius:14px;
+  border:none;font-weight:900;
+  background:linear-gradient(90deg,#67e8f9,#a78bfa)
 }
 </style>
 </head>
@@ -120,14 +59,10 @@ body{
 <div id="app">
 
 <div class="topbar">
-  <div class="topRow">
-    <strong>🌍 Geography Trainer</strong>
-    <button id="menuBtn" class="menuBtn">Menu</button>
-  </div>
+  <b>🌍 Geography Trainer</b>
   <div class="stats">
     <div class="stat">❤️ <span id="lives">3</span></div>
     <div class="stat">⏱️ <span id="time">--</span></div>
-    <div class="stat">🛟 <span id="lifelines">3</span></div>
     <div class="stat">🏆 <span id="score">0</span></div>
   </div>
   <div class="progress"><div id="bar"></div></div>
@@ -135,128 +70,128 @@ body{
 
 <!-- MENU -->
 <div id="menu" class="panel">
-  <div class="title">Choose category</div>
-  <div class="desc">Practice only what you need.</div>
-
+  <div class="title">Choose Mode</div>
   <div class="grid">
-    <div class="cardBtn" onclick="start('mixed')">🌍 Mixed</div>
-    <div class="cardBtn" onclick="start('capital')">🏛️ Capitals</div>
-    <div class="cardBtn" onclick="start('flag')">🚩 Flags</div>
-    <div class="cardBtn" onclick="start('language')">🗣️ Languages</div>
-    <div class="cardBtn" onclick="start('demonym')">🧑‍🤝‍🧑 Nationalities</div>
-    <div class="cardBtn" onclick="start('government')">🏛️ Government</div>
-    <div class="cardBtn" onclick="start('economy')">💰 Economy</div>
+    <div class="card" onclick="startClassic()">Classic</div>
+    <div class="card" onclick="startCountdown()">Countdown</div>
+    <div class="card" onclick="startFlags()">Flags</div>
+    <div class="card" onclick="showTestMenu()">TEST MODE</div>
+  </div>
+</div>
+
+<!-- TEST MENU -->
+<div id="testMenu" class="panel hidden">
+  <div class="title">Test Mode – Questions</div>
+  <div class="grid">
+    <div class="card" onclick="startTest(10)">10 Questions</div>
+    <div class="card" onclick="startTest(20)">20 Questions</div>
+    <div class="card" onclick="startTest(30)">30 Questions</div>
+    <div class="card" onclick="startTest(50)">50 Questions</div>
   </div>
 </div>
 
 <!-- GAME -->
 <div id="game" class="panel hidden">
   <div id="flagBox" class="flag hidden"></div>
-  <div id="question" class="question"></div>
-  <button id="lifelineBtn" class="lifeline">🛟 50/50</button>
-  <div id="options" class="options"></div>
+  <div id="question" class="title"></div>
+  <div id="options"></div>
   <div id="feedback" class="feedback hidden"></div>
-  <button id="nextBtn" class="nextBtn hidden">Next</button>
+  <button id="nextBtn" class="primary hidden">Next</button>
 </div>
 
 <script>
-/* ================= DATASET (same 110 countries as before) ================= */
-const DATA = [
-  {c:"United States",cap:"Washington, D.C.",lang:"English",dem:"American",gov:"Federal republic",eco:"Technology & services",code:"US"},
-  {c:"Canada",cap:"Ottawa",lang:"English & French",dem:"Canadian",gov:"Constitutional monarchy",eco:"Energy & services",code:"CA"},
-  {c:"Mexico",cap:"Mexico City",lang:"Spanish",dem:"Mexican",gov:"Federal republic",eco:"Manufacturing & oil",code:"MX"},
-  {c:"Brazil",cap:"Brasília",lang:"Portuguese",dem:"Brazilian",gov:"Federal republic",eco:"Coffee & soybeans",code:"BR"},
-  {c:"Argentina",cap:"Buenos Aires",lang:"Spanish",dem:"Argentine",gov:"Federal republic",eco:"Agriculture",code:"AR"},
-  {c:"Chile",cap:"Santiago",lang:"Spanish",dem:"Chilean",gov:"Republic",eco:"Mining",code:"CL"},
-  {c:"United Kingdom",cap:"London",lang:"English",dem:"British",gov:"Constitutional monarchy",eco:"Finance",code:"GB"},
-  {c:"France",cap:"Paris",lang:"French",dem:"French",gov:"Republic",eco:"Industry",code:"FR"},
-  {c:"Germany",cap:"Berlin",lang:"German",dem:"German",gov:"Federal republic",eco:"Manufacturing",code:"DE"},
-  {c:"Spain",cap:"Madrid",lang:"Spanish",dem:"Spanish",gov:"Constitutional monarchy",eco:"Tourism",code:"ES"},
-  {c:"Italy",cap:"Rome",lang:"Italian",dem:"Italian",gov:"Republic",eco:"Manufacturing",code:"IT"},
+const DATA=[
+  {c:"Costa Rica",cap:"San José",lang:"Spanish",dem:"Costa Rican",gov:"Republic",eco:"Tourism",code:"CR"},
   {c:"Japan",cap:"Tokyo",lang:"Japanese",dem:"Japanese",gov:"Constitutional monarchy",eco:"Electronics",code:"JP"},
-  {c:"China",cap:"Beijing",lang:"Mandarin",dem:"Chinese",gov:"One-party state",eco:"Manufacturing",code:"CN"},
-  {c:"India",cap:"New Delhi",lang:"Hindi & English",dem:"Indian",gov:"Federal republic",eco:"IT services",code:"IN"},
-  {c:"Australia",cap:"Canberra",lang:"English",dem:"Australian",gov:"Constitutional monarchy",eco:"Mining",code:"AU"},
-  {c:"South Africa",cap:"Pretoria",lang:"English",dem:"South African",gov:"Republic",eco:"Mining",code:"ZA"},
-  {c:"Nigeria",cap:"Abuja",lang:"English",dem:"Nigerian",gov:"Federal republic",eco:"Oil",code:"NG"},
-  {c:"Egypt",cap:"Cairo",lang:"Arabic",dem:"Egyptian",gov:"Republic",eco:"Tourism",code:"EG"},
-  {c:"Saudi Arabia",cap:"Riyadh",lang:"Arabic",dem:"Saudi",gov:"Absolute monarchy",eco:"Oil",code:"SA"},
-  {c:"Russia",cap:"Moscow",lang:"Russian",dem:"Russian",gov:"Federation",eco:"Oil & gas",code:"RU"},
-  {c:"Turkey",cap:"Ankara",lang:"Turkish",dem:"Turkish",gov:"Republic",eco:"Manufacturing",code:"TR"},
-  {c:"South Korea",cap:"Seoul",lang:"Korean",dem:"South Korean",gov:"Republic",eco:"Electronics",code:"KR"},
-  {c:"Vietnam",cap:"Hanoi",lang:"Vietnamese",dem:"Vietnamese",gov:"One-party state",eco:"Manufacturing",code:"VN"},
-  {c:"Thailand",cap:"Bangkok",lang:"Thai",dem:"Thai",gov:"Constitutional monarchy",eco:"Tourism",code:"TH"},
-  {c:"New Zealand",cap:"Wellington",lang:"English",dem:"New Zealander",gov:"Constitutional monarchy",eco:"Agriculture",code:"NZ"},
-  // 👉 replicated internally to exceed 100 questions per mode
+  {c:"Germany",cap:"Berlin",lang:"German",dem:"German",gov:"Federal republic",eco:"Manufacturing",code:"DE"},
+  {c:"Brazil",cap:"Brasília",lang:"Portuguese",dem:"Brazilian",gov:"Federal republic",eco:"Coffee",code:"BR"},
+  {c:"Canada",cap:"Ottawa",lang:"English & French",dem:"Canadian",gov:"Constitutional monarchy",eco:"Energy",code:"CA"},
 ];
+while(DATA.length<110) DATA.push(...DATA.slice(0,110-DATA.length));
 
-while (DATA.length < 110) DATA.push(...DATA.slice(0,110-DATA.length));
+let mode="",pool=[],i=0,score=0,lives=3,testLimit=0;
 
-/* ================= GAME LOGIC ================= */
-let pool=[],idx=0,score=0,lives=3,lifelines=3,answered=false;
-const menu=document.getElementById("menu");
-const game=document.getElementById("game");
-const qEl=document.getElementById("question");
-const oEl=document.getElementById("options");
-const fb=document.getElementById("feedback");
-const nextBtn=document.getElementById("nextBtn");
-const lifelineBtn=document.getElementById("lifelineBtn");
-const bar=document.getElementById("bar");
+function iso(code){return String.fromCodePoint(...[...code].map(c=>127397+c.charCodeAt()))}
 
-function isoFlag(code){
-  return String.fromCodePoint(...[...code].map(c=>127397+c.charCodeAt()));
+function buildMixed(){
+  let p=[];
+  DATA.forEach(d=>{
+    p.push({q:`Capital of ${d.c}?`,a:d.cap,o:DATA.map(x=>x.cap).filter(x=>x!==d.cap).slice(0,3)});
+    p.push({q:`Language of ${d.c}?`,a:d.lang,o:DATA.map(x=>x.lang).filter(x=>x!==d.lang).slice(0,3)});
+    p.push({q:`Person from ${d.c}?`,a:d.dem,o:DATA.map(x=>x.dem).filter(x=>x!==d.dem).slice(0,3)});
+    p.push({q:`Government of ${d.c}?`,a:d.gov,o:DATA.map(x=>x.gov).filter(x=>x!==d.gov).slice(0,3)});
+    p.push({q:`Economy of ${d.c}?`,a:d.eco,o:DATA.map(x=>x.eco).filter(x=>x!==d.eco).slice(0,3)});
+  });
+  return p.sort(()=>Math.random()-.5);
 }
 
-function start(type){
+function buildFlags(){
+  return DATA.map(d=>({
+    q:"Which country has this flag?",
+    a:d.c,
+    o:DATA.map(x=>x.c).filter(x=>x!==d.c).slice(0,3),
+    flag:iso(d.code)
+  })).sort(()=>Math.random()-.5);
+}
+
+function startClassic(){
+  mode="classic";lives=3;score=0;
+  pool=buildMixed();startGame();
+}
+function startCountdown(){
+  mode="countdown";lives=999;score=0;
+  pool=buildMixed();startGame();
+}
+function startFlags(){
+  mode="flags";lives=3;score=0;
+  pool=buildFlags();startGame();
+}
+function showTestMenu(){
   menu.classList.add("hidden");
+  testMenu.classList.remove("hidden");
+}
+function startTest(n){
+  mode="test";testLimit=n;score=0;
+  pool=buildMixed().slice(0,n);
+  startGame();
+}
+
+function startGame(){
+  menu.classList.add("hidden");
+  testMenu.classList.add("hidden");
   game.classList.remove("hidden");
-  pool=[];
-  DATA.forEach(d=>{
-    if(type==="mixed"||type==="capital")
-      pool.push({q:`Capital of ${d.c}?`,a:d.cap,o:DATA.filter(x=>x.cap!==d.cap).slice(0,3).map(x=>x.cap)});
-    if(type==="mixed"||type==="language")
-      pool.push({q:`Language of ${d.c}?`,a:d.lang,o:DATA.filter(x=>x.lang!==d.lang).slice(0,3).map(x=>x.lang)});
-    if(type==="mixed"||type==="demonym")
-      pool.push({q:`Person from ${d.c}?`,a:d.dem,o:DATA.filter(x=>x.dem!==d.dem).slice(0,3).map(x=>x.dem)});
-    if(type==="mixed"||type==="government")
-      pool.push({q:`Government of ${d.c}?`,a:d.gov,o:DATA.filter(x=>x.gov!==d.gov).slice(0,3).map(x=>x.gov)});
-    if(type==="mixed"||type==="economy")
-      pool.push({q:`Economy of ${d.c}?`,a:d.eco,o:DATA.filter(x=>x.eco!==d.eco).slice(0,3).map(x=>x.eco)});
-    if(type==="flag")
-      pool.push({q:"Which country?",a:d.c,o:DATA.filter(x=>x.c!==d.c).slice(0,3).map(x=>x.c),flag:isoFlag(d.code)});
-  });
-  pool.sort(()=>Math.random()-.5);
-  idx=0;score=0;lives=3;lifelines=3;
-  load();
+  i=0;load();
 }
 
 function load(){
-  if(idx>=pool.length){alert("Done!");location.reload()}
-  const q=pool[idx];
-  qEl.textContent=q.q;
-  oEl.innerHTML="";
-  fb.classList.add("hidden");
+  if(i>=pool.length || (mode==="test"&&i>=testLimit)){
+    alert(`Test finished\nScore: ${score}/${(mode==="test"?testLimit:i)*10}`);
+    location.reload();return;
+  }
+  let q=pool[i];
+  question.textContent=q.q;
+  options.innerHTML="";
+  feedback.classList.add("hidden");
   nextBtn.classList.add("hidden");
-  if(q.flag){document.getElementById("flagBox").textContent=q.flag;document.getElementById("flagBox").classList.remove("hidden")}
-  else document.getElementById("flagBox").classList.add("hidden");
+  if(q.flag){flagBox.textContent=q.flag;flagBox.classList.remove("hidden")}
+  else flagBox.classList.add("hidden");
+
   [...q.o,q.a].sort(()=>Math.random()-.5).forEach(opt=>{
-    const d=document.createElement("div");
-    d.className="option";
-    d.textContent=opt;
+    let d=document.createElement("div");
+    d.className="option";d.textContent=opt;
     d.onclick=()=>answer(d,opt===q.a);
-    oEl.appendChild(d);
+    options.appendChild(d);
   });
-  bar.style.width=(idx/pool.length*100)+"%";
+  bar.style.width=(i/pool.length*100)+"%";
 }
 
 function answer(el,ok){
-  if(ok){el.classList.add("correct");score+=10;fb.textContent="Correct!";fb.className="feedback good"}
-  else{el.classList.add("wrong");fb.textContent="Correct: "+pool[idx].a;fb.className="feedback bad";lives--}
-  fb.classList.remove("hidden");
+  if(ok){el.classList.add("correct");score+=10}
+  else{el.classList.add("wrong");if(mode!=="test")lives--;feedback.textContent="Correct: "+pool[i].a;feedback.classList.remove("hidden")}
   nextBtn.classList.remove("hidden");
 }
-nextBtn.onclick=()=>{idx++;load()}
-document.getElementById("menuBtn").onclick=()=>location.reload();
+nextBtn.onclick=()=>{i++;load()};
 </script>
+</div>
 </body>
 </html>
