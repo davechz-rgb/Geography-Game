@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="es">
+<html lang="en">
 <head>
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"/>
@@ -162,6 +162,8 @@ body{
 @keyframes shake{0%{transform:translateX(0)}25%{transform:translateX(-4px)}50%{transform:translateX(4px)}75%{transform:translateX(-3px)}100%{transform:translateX(0)}}
 .opt.correct{animation:pulse .22s ease-out}
 .opt.wrong{animation:shake .22s ease-out}
+
+#musicChip{pointer-events:auto;cursor:pointer;}
 </style>
 </head>
 <body>
@@ -173,71 +175,72 @@ body{
         <div class="badge">🌍</div>
         <div>
           <div style="font-size:14px; font-weight:1000;">Geography Trainer</div>
-          <div style="font-size:12px; color:var(--muted); font-weight:850;" id="subtitle">Modo: —</div>
+          <div style="font-size:12px; color:var(--muted); font-weight:850;" id="subtitle">Mode: —</div>
         </div>
       </div>
-      <button class="menuBtn" id="menuBtn">🏠 Menú</button>
+      <button class="menuBtn" id="menuBtn">🏠 Menu</button>
     </div>
 
     <div class="hud">
-      <div class="chip">❤️ <span id="hudLives">3</span><small id="hudLivesLabel">vidas</small></div>
-      <div class="chip">⏱️ <span id="hudTime">—</span><small id="hudTimeLabel">tiempo</small></div>
+      <div class="chip">❤️ <span id="hudLives">3</span><small id="hudLivesLabel">lives</small></div>
+      <div class="chip">⏱️ <span id="hudTime">—</span><small id="hudTimeLabel">time</small></div>
       <div class="chip">🛟 <span id="hud5050">3</span><small>50/50</small></div>
-      <div class="chip">🔥 <span id="hudStreak">0</span><small>racha</small></div>
-      <div class="chip">🏆 <span id="hudScore">0</span><small>puntos</small></div>
-      <div class="chip">📚 <span id="hudQ">0</span>/<span id="hudTotal">0</span><small>preg</small></div>
+      <div class="chip">🔥 <span id="hudStreak">0</span><small>streak</small></div>
+      <div class="chip">🏆 <span id="hudScore">0</span><small>points</small></div>
+      <div class="chip">📚 <span id="hudQ">0</span>/<span id="hudTotal">0</span><small>qs</small></div>
+      <div class="chip" id="musicChip" style="cursor:pointer">🎵 <span id="hudMusic">ON</span><small>music</small></div>
     </div>
 
     <div class="progress"><div id="hudBar"></div></div>
   </div>
 
   <div id="menu" class="panel">
-    <h2 class="h1">Elige un modo</h2>
-    <p class="sub">Estilo Duolingo: rápido, claro y con feedback inmediato. (110 países cargados)</p>
+    <h2 class="h1">Choose a mode</h2>
+    <p class="sub">Duolingo-style: fast, clear, and instant feedback. (110 countries loaded)</p>
 
     <div class="grid">
       <div class="card" data-mode="classic">
         <div class="cardTitle">✅ Classic</div>
-        <div class="cardDesc">3 vidas • preguntas infinitas • mezcla de temas</div>
+        <div class="cardDesc">3 lives • endless questions • mixed topics</div>
       </div>
       <div class="card" data-mode="countdown">
         <div class="cardTitle">⏳ Countdown</div>
-        <div class="cardDesc">60s total • +2s por correcta • score por racha</div>
+        <div class="cardDesc">60s total • +2s per correct • streak scoring</div>
       </div>
       <div class="card" data-mode="flags">
         <div class="cardTitle">🚩 Flags</div>
-        <div class="cardDesc">bandera → país • 3 vidas • 50/50</div>
+        <div class="cardDesc">flag → country • 3 lives • 50/50</div>
       </div>
       <div class="card" data-mode="test">
         <div class="cardTitle">📝 TEST</div>
-        <div class="cardDesc">elige # preguntas • calificación final • revisión</div>
+        <div class="cardDesc">elige # questions • final grade • review</div>
       </div>
     </div>
 
     <div style="margin-top:14px">
-      <div class="sub" style="margin-bottom:8px">Temas (en Classic/Countdown/Test):</div>
+      <div class="sub" style="margin-bottom:8px">Topics (Classic/Countdown/TEST):</div>
       <div class="pillRow" id="topicRow"></div>
     </div>
 
     <div class="pillRow" style="margin-top:12px">
-      <div class="pill" id="toggleSound">🔊 Sonido: ON</div>
-      <div class="pill" id="toggleHaptics">📳 Haptic: ON</div>
+      <div class="pill" id="toggleSound">🔊 SFX: ON</div>
+      <div class="pill" id="toggleHaptics">📳 Haptics: ON</div>
     </div>
   </div>
 
   <div id="testSetup" class="panel hidden">
-    <h2 class="h1">Configurar TEST</h2>
-    <p class="sub">Escoge cuántas preguntas. Se mezclan temas (y puedes incluir banderas).</p>
+    <h2 class="h1">TEST setup</h2>
+    <p class="sub">Pick how many questions. Topics are mixed (you can include flags).</p>
 
     <div class="pillRow" id="testCounts"></div>
 
     <div class="pillRow" style="margin-top:10px">
-      <div class="pill" id="testIncludeFlags">🚩 Incluir banderas: SÍ</div>
+      <div class="pill" id="testIncludeFlags">🚩 Include flags: YES</div>
     </div>
 
     <div class="actions" style="margin-top:12px">
-      <button class="btn" id="backToMenu1">← Volver</button>
-      <button class="btn btnPrimary" id="startTestBtn">Empezar TEST</button>
+      <button class="btn" id="backToMenu1">← Back</button>
+      <button class="btn btnPrimary" id="startTestBtn">Start TEST</button>
     </div>
   </div>
 
@@ -248,7 +251,7 @@ body{
 
       <div class="actions">
         <button class="btn" id="btn5050">🛟 50/50</button>
-        <button class="btn" id="btnSkip">⏭️ Saltar</button>
+        <button class="btn" id="btnSkip">⏭️ Skip</button>
       </div>
 
       <div class="options" id="options"></div>
@@ -256,19 +259,19 @@ body{
       <div class="feedback hidden" id="feedback"></div>
 
       <div class="actions">
-        <button class="btn btnPrimary hidden" id="btnNext">Siguiente</button>
-        <button class="btn hidden" id="btnFinish">Terminar</button>
+        <button class="btn btnPrimary hidden" id="btnNext">Next</button>
+        <button class="btn hidden" id="btnDoneish">Doneish</button>
       </div>
     </div>
   </div>
 
   <div id="results" class="panel hidden">
-    <h2 class="h1">Resultados</h2>
+    <h2 class="h1">Results</h2>
     <p class="sub" id="resultsSummary">—</p>
     <div id="resultsList"></div>
     <div class="actions">
-      <button class="btn" id="backToMenu2">🏠 Menú</button>
-      <button class="btn btnPrimary" id="playAgain">Jugar otra vez</button>
+      <button class="btn" id="backToMenu2">🏠 Menu</button>
+      <button class="btn btnPrimary" id="playAgain">Play again</button>
     </div>
   </div>
 
@@ -277,12 +280,13 @@ body{
 <div class="toast" id="toast">—</div>
 
 <script>
-const DATA = [{"code": "US", "name": "United States", "capital": "Washington, D.C.", "language": "English", "demonym": "American", "government": "Federal republic", "economy": "Technology & services"}, {"code": "CA", "name": "Canada", "capital": "Ottawa", "language": "English & French", "demonym": "Canadian", "government": "Constitutional monarchy", "economy": "Energy & services"}, {"code": "MX", "name": "Mexico", "capital": "Mexico City", "language": "Spanish", "demonym": "Mexican", "government": "Federal republic", "economy": "Manufacturing & oil"}, {"code": "GT", "name": "Guatemala", "capital": "Guatemala City", "language": "Spanish", "demonym": "Guatemalan", "government": "Republic", "economy": "Agriculture"}, {"code": "BZ", "name": "Belize", "capital": "Belmopan", "language": "English", "demonym": "Belizean", "government": "Constitutional monarchy", "economy": "Tourism & agriculture"}, {"code": "HN", "name": "Honduras", "capital": "Tegucigalpa", "language": "Spanish", "demonym": "Honduran", "government": "Republic", "economy": "Agriculture"}, {"code": "SV", "name": "El Salvador", "capital": "San Salvador", "language": "Spanish", "demonym": "Salvadoran", "government": "Republic", "economy": "Services"}, {"code": "NI", "name": "Nicaragua", "capital": "Managua", "language": "Spanish", "demonym": "Nicaraguan", "government": "Republic", "economy": "Agriculture"}, {"code": "CR", "name": "Costa Rica", "capital": "San José", "language": "Spanish", "demonym": "Costa Rican", "government": "Republic", "economy": "Services & tourism"}, {"code": "PA", "name": "Panama", "capital": "Panama City", "language": "Spanish", "demonym": "Panamanian", "government": "Republic", "economy": "Canal & services"}, {"code": "CU", "name": "Cuba", "capital": "Havana", "language": "Spanish", "demonym": "Cuban", "government": "One-party state", "economy": "Tourism & services"}, {"code": "DO", "name": "Dominican Republic", "capital": "Santo Domingo", "language": "Spanish", "demonym": "Dominican", "government": "Republic", "economy": "Tourism"}, {"code": "HT", "name": "Haiti", "capital": "Port-au-Prince", "language": "Haitian Creole & French", "demonym": "Haitian", "government": "Republic", "economy": "Agriculture"}, {"code": "JM", "name": "Jamaica", "capital": "Kingston", "language": "English", "demonym": "Jamaican", "government": "Constitutional monarchy", "economy": "Tourism"}, {"code": "BS", "name": "Bahamas", "capital": "Nassau", "language": "English", "demonym": "Bahamian", "government": "Constitutional monarchy", "economy": "Tourism"}, {"code": "BB", "name": "Barbados", "capital": "Bridgetown", "language": "English", "demonym": "Barbadian", "government": "Republic", "economy": "Tourism"}, {"code": "TT", "name": "Trinidad and Tobago", "capital": "Port of Spain", "language": "English", "demonym": "Trinidadian and Tobagonian", "government": "Republic", "economy": "Oil & gas"}, {"code": "CO", "name": "Colombia", "capital": "Bogotá", "language": "Spanish", "demonym": "Colombian", "government": "Republic", "economy": "Oil, coffee"}, {"code": "VE", "name": "Venezuela", "capital": "Caracas", "language": "Spanish", "demonym": "Venezuelan", "government": "Republic", "economy": "Oil"}, {"code": "EC", "name": "Ecuador", "capital": "Quito", "language": "Spanish", "demonym": "Ecuadorian", "government": "Republic", "economy": "Oil & agriculture"}, {"code": "PE", "name": "Peru", "capital": "Lima", "language": "Spanish", "demonym": "Peruvian", "government": "Republic", "economy": "Mining"}, {"code": "BO", "name": "Bolivia", "capital": "Sucre", "language": "Spanish", "demonym": "Bolivian", "government": "Republic", "economy": "Mining & gas"}, {"code": "CL", "name": "Chile", "capital": "Santiago", "language": "Spanish", "demonym": "Chilean", "government": "Republic", "economy": "Mining (copper)"}, {"code": "AR", "name": "Argentina", "capital": "Buenos Aires", "language": "Spanish", "demonym": "Argentine", "government": "Federal republic", "economy": "Agriculture & industry"}, {"code": "UY", "name": "Uruguay", "capital": "Montevideo", "language": "Spanish", "demonym": "Uruguayan", "government": "Republic", "economy": "Services & agriculture"}, {"code": "PY", "name": "Paraguay", "capital": "Asunción", "language": "Spanish & Guaraní", "demonym": "Paraguayan", "government": "Republic", "economy": "Agriculture & hydroelectric"}, {"code": "BR", "name": "Brazil", "capital": "Brasília", "language": "Portuguese", "demonym": "Brazilian", "government": "Federal republic", "economy": "Coffee & soybeans"}, {"code": "GY", "name": "Guyana", "capital": "Georgetown", "language": "English", "demonym": "Guyanese", "government": "Republic", "economy": "Oil & mining"}, {"code": "SR", "name": "Suriname", "capital": "Paramaribo", "language": "Dutch", "demonym": "Surinamese", "government": "Republic", "economy": "Mining"}, {"code": "GB", "name": "United Kingdom", "capital": "London", "language": "English", "demonym": "British", "government": "Constitutional monarchy", "economy": "Finance & services"}, {"code": "IE", "name": "Ireland", "capital": "Dublin", "language": "English & Irish", "demonym": "Irish", "government": "Republic", "economy": "Technology & services"}, {"code": "FR", "name": "France", "capital": "Paris", "language": "French", "demonym": "French", "government": "Republic", "economy": "Industry & services"}, {"code": "ES", "name": "Spain", "capital": "Madrid", "language": "Spanish", "demonym": "Spanish", "government": "Constitutional monarchy", "economy": "Tourism & services"}, {"code": "PT", "name": "Portugal", "capital": "Lisbon", "language": "Portuguese", "demonym": "Portuguese", "government": "Republic", "economy": "Tourism & services"}, {"code": "DE", "name": "Germany", "capital": "Berlin", "language": "German", "demonym": "German", "government": "Federal republic", "economy": "Manufacturing"}, {"code": "NL", "name": "Netherlands", "capital": "Amsterdam", "language": "Dutch", "demonym": "Dutch", "government": "Constitutional monarchy", "economy": "Trade & services"}, {"code": "BE", "name": "Belgium", "capital": "Brussels", "language": "Dutch, French, German", "demonym": "Belgian", "government": "Federal constitutional monarchy", "economy": "Industry & services"}, {"code": "LU", "name": "Luxembourg", "capital": "Luxembourg", "language": "Luxembourgish, French, German", "demonym": "Luxembourger", "government": "Constitutional monarchy", "economy": "Finance"}, {"code": "CH", "name": "Switzerland", "capital": "Bern", "language": "German, French, Italian, Romansh", "demonym": "Swiss", "government": "Federal republic", "economy": "Finance & pharma"}, {"code": "IT", "name": "Italy", "capital": "Rome", "language": "Italian", "demonym": "Italian", "government": "Republic", "economy": "Manufacturing"}, {"code": "AT", "name": "Austria", "capital": "Vienna", "language": "German", "demonym": "Austrian", "government": "Republic", "economy": "Industry & services"}, {"code": "DK", "name": "Denmark", "capital": "Copenhagen", "language": "Danish", "demonym": "Danish", "government": "Constitutional monarchy", "economy": "Services"}, {"code": "SE", "name": "Sweden", "capital": "Stockholm", "language": "Swedish", "demonym": "Swedish", "government": "Constitutional monarchy", "economy": "Manufacturing & tech"}, {"code": "NO", "name": "Norway", "capital": "Oslo", "language": "Norwegian", "demonym": "Norwegian", "government": "Constitutional monarchy", "economy": "Oil & gas"}, {"code": "FI", "name": "Finland", "capital": "Helsinki", "language": "Finnish & Swedish", "demonym": "Finnish", "government": "Republic", "economy": "Technology"}, {"code": "IS", "name": "Iceland", "capital": "Reykjavík", "language": "Icelandic", "demonym": "Icelandic", "government": "Republic", "economy": "Fishing & tourism"}, {"code": "PL", "name": "Poland", "capital": "Warsaw", "language": "Polish", "demonym": "Polish", "government": "Republic", "economy": "Manufacturing"}, {"code": "CZ", "name": "Czechia", "capital": "Prague", "language": "Czech", "demonym": "Czech", "government": "Republic", "economy": "Manufacturing"}, {"code": "SK", "name": "Slovakia", "capital": "Bratislava", "language": "Slovak", "demonym": "Slovak", "government": "Republic", "economy": "Manufacturing"}, {"code": "HU", "name": "Hungary", "capital": "Budapest", "language": "Hungarian", "demonym": "Hungarian", "government": "Republic", "economy": "Manufacturing"}, {"code": "RO", "name": "Romania", "capital": "Bucharest", "language": "Romanian", "demonym": "Romanian", "government": "Republic", "economy": "Industry"}, {"code": "BG", "name": "Bulgaria", "capital": "Sofia", "language": "Bulgarian", "demonym": "Bulgarian", "government": "Republic", "economy": "Industry"}, {"code": "GR", "name": "Greece", "capital": "Athens", "language": "Greek", "demonym": "Greek", "government": "Republic", "economy": "Tourism & shipping"}, {"code": "HR", "name": "Croatia", "capital": "Zagreb", "language": "Croatian", "demonym": "Croatian", "government": "Republic", "economy": "Tourism"}, {"code": "RS", "name": "Serbia", "capital": "Belgrade", "language": "Serbian", "demonym": "Serbian", "government": "Republic", "economy": "Industry"}, {"code": "UA", "name": "Ukraine", "capital": "Kyiv", "language": "Ukrainian", "demonym": "Ukrainian", "government": "Republic", "economy": "Agriculture"}, {"code": "RU", "name": "Russia", "capital": "Moscow", "language": "Russian", "demonym": "Russian", "government": "Federation", "economy": "Oil & gas"}, {"code": "TR", "name": "Turkey", "capital": "Ankara", "language": "Turkish", "demonym": "Turkish", "government": "Republic", "economy": "Manufacturing"}, {"code": "SA", "name": "Saudi Arabia", "capital": "Riyadh", "language": "Arabic", "demonym": "Saudi", "government": "Absolute monarchy", "economy": "Oil"}, {"code": "AE", "name": "United Arab Emirates", "capital": "Abu Dhabi", "language": "Arabic", "demonym": "Emirati", "government": "Federation", "economy": "Oil & services"}, {"code": "QA", "name": "Qatar", "capital": "Doha", "language": "Arabic", "demonym": "Qatari", "government": "Monarchy", "economy": "Gas"}, {"code": "IL", "name": "Israel", "capital": "Jerusalem", "language": "Hebrew", "demonym": "Israeli", "government": "Parliamentary democracy", "economy": "Technology"}, {"code": "IR", "name": "Iran", "capital": "Tehran", "language": "Persian (Farsi)", "demonym": "Iranian", "government": "Islamic republic", "economy": "Oil & gas"}, {"code": "IQ", "name": "Iraq", "capital": "Baghdad", "language": "Arabic & Kurdish", "demonym": "Iraqi", "government": "Republic", "economy": "Oil"}, {"code": "PK", "name": "Pakistan", "capital": "Islamabad", "language": "Urdu", "demonym": "Pakistani", "government": "Republic", "economy": "Textiles"}, {"code": "IN", "name": "India", "capital": "New Delhi", "language": "Hindi & English", "demonym": "Indian", "government": "Federal republic", "economy": "Services & IT"}, {"code": "BD", "name": "Bangladesh", "capital": "Dhaka", "language": "Bengali", "demonym": "Bangladeshi", "government": "Republic", "economy": "Textiles"}, {"code": "NP", "name": "Nepal", "capital": "Kathmandu", "language": "Nepali", "demonym": "Nepali", "government": "Federal republic", "economy": "Tourism"}, {"code": "LK", "name": "Sri Lanka", "capital": "Sri Jayawardenepura Kotte", "language": "Sinhala & Tamil", "demonym": "Sri Lankan", "government": "Republic", "economy": "Tea"}, {"code": "AF", "name": "Afghanistan", "capital": "Kabul", "language": "Dari & Pashto", "demonym": "Afghan", "government": "Republic", "economy": "Agriculture"}, {"code": "TH", "name": "Thailand", "capital": "Bangkok", "language": "Thai", "demonym": "Thai", "government": "Constitutional monarchy", "economy": "Tourism"}, {"code": "VN", "name": "Vietnam", "capital": "Hanoi", "language": "Vietnamese", "demonym": "Vietnamese", "government": "One-party state", "economy": "Manufacturing"}, {"code": "SG", "name": "Singapore", "capital": "Singapore", "language": "English, Malay, Chinese, Tamil", "demonym": "Singaporean", "government": "Republic", "economy": "Finance & trade"}, {"code": "MY", "name": "Malaysia", "capital": "Kuala Lumpur", "language": "Malay", "demonym": "Malaysian", "government": "Constitutional monarchy", "economy": "Manufacturing"}, {"code": "ID", "name": "Indonesia", "capital": "Jakarta", "language": "Indonesian", "demonym": "Indonesian", "government": "Republic", "economy": "Manufacturing"}, {"code": "PH", "name": "Philippines", "capital": "Manila", "language": "Filipino & English", "demonym": "Filipino", "government": "Republic", "economy": "Services"}, {"code": "CN", "name": "China", "capital": "Beijing", "language": "Chinese (Mandarin)", "demonym": "Chinese", "government": "One-party state", "economy": "Manufacturing"}, {"code": "JP", "name": "Japan", "capital": "Tokyo", "language": "Japanese", "demonym": "Japanese", "government": "Constitutional monarchy", "economy": "Cars & electronics"}, {"code": "KR", "name": "South Korea", "capital": "Seoul", "language": "Korean", "demonym": "South Korean", "government": "Republic", "economy": "Electronics"}, {"code": "AU", "name": "Australia", "capital": "Canberra", "language": "English", "demonym": "Australian", "government": "Constitutional monarchy", "economy": "Mining"}, {"code": "NZ", "name": "New Zealand", "capital": "Wellington", "language": "English", "demonym": "New Zealander", "government": "Constitutional monarchy", "economy": "Agriculture"}, {"code": "MA", "name": "Morocco", "capital": "Rabat", "language": "Arabic", "demonym": "Moroccan", "government": "Constitutional monarchy", "economy": "Tourism & agriculture"}, {"code": "DZ", "name": "Algeria", "capital": "Algiers", "language": "Arabic", "demonym": "Algerian", "government": "Republic", "economy": "Oil & gas"}, {"code": "TN", "name": "Tunisia", "capital": "Tunis", "language": "Arabic", "demonym": "Tunisian", "government": "Republic", "economy": "Tourism"}, {"code": "EG", "name": "Egypt", "capital": "Cairo", "language": "Arabic", "demonym": "Egyptian", "government": "Republic", "economy": "Tourism & services"}, {"code": "NG", "name": "Nigeria", "capital": "Abuja", "language": "English", "demonym": "Nigerian", "government": "Federal republic", "economy": "Oil"}, {"code": "GH", "name": "Ghana", "capital": "Accra", "language": "English", "demonym": "Ghanaian", "government": "Republic", "economy": "Cocoa & gold"}, {"code": "SN", "name": "Senegal", "capital": "Dakar", "language": "French", "demonym": "Senegalese", "government": "Republic", "economy": "Fishing & services"}, {"code": "ET", "name": "Ethiopia", "capital": "Addis Ababa", "language": "Amharic", "demonym": "Ethiopian", "government": "Federation", "economy": "Agriculture"}, {"code": "KE", "name": "Kenya", "capital": "Nairobi", "language": "Swahili & English", "demonym": "Kenyan", "government": "Republic", "economy": "Agriculture & tourism"}, {"code": "TZ", "name": "Tanzania", "capital": "Dodoma", "language": "Swahili", "demonym": "Tanzanian", "government": "Republic", "economy": "Tourism & agriculture"}, {"code": "UG", "name": "Uganda", "capital": "Kampala", "language": "English & Swahili", "demonym": "Ugandan", "government": "Republic", "economy": "Agriculture"}, {"code": "RW", "name": "Rwanda", "capital": "Kigali", "language": "Kinyarwanda, English, French", "demonym": "Rwandan", "government": "Republic", "economy": "Services"}, {"code": "ZA", "name": "South Africa", "capital": "Pretoria", "language": "English & others", "demonym": "South African", "government": "Republic", "economy": "Mining"}, {"code": "AO", "name": "Angola", "capital": "Luanda", "language": "Portuguese", "demonym": "Angolan", "government": "Republic", "economy": "Oil"}, {"code": "MZ", "name": "Mozambique", "capital": "Maputo", "language": "Portuguese", "demonym": "Mozambican", "government": "Republic", "economy": "Agriculture & gas"}, {"code": "ZW", "name": "Zimbabwe", "capital": "Harare", "language": "English & others", "demonym": "Zimbabwean", "government": "Republic", "economy": "Mining"}, {"code": "ZM", "name": "Zambia", "capital": "Lusaka", "language": "English", "demonym": "Zambian", "government": "Republic", "economy": "Mining (copper)"}, {"code": "MG", "name": "Madagascar", "capital": "Antananarivo", "language": "Malagasy & French", "demonym": "Malagasy", "government": "Republic", "economy": "Agriculture"}, {"code": "NA", "name": "Namibia", "capital": "Windhoek", "language": "English", "demonym": "Namibian", "government": "Republic", "economy": "Mining"}, {"code": "BW", "name": "Botswana", "capital": "Gaborone", "language": "English & Tswana", "demonym": "Motswana", "government": "Republic", "economy": "Mining (diamonds)"}, {"code": "CM", "name": "Cameroon", "capital": "Yaoundé", "language": "French & English", "demonym": "Cameroonian", "government": "Republic", "economy": "Agriculture"}, {"code": "CI", "name": "Côte d’Ivoire", "capital": "Yamoussoukro", "language": "French", "demonym": "Ivorian", "government": "Republic", "economy": "Cocoa"}, {"code": "AL", "name": "Albania", "capital": "Tirana", "language": "Albanian", "demonym": "Albanian", "government": "Republic", "economy": "Services"}, {"code": "SI", "name": "Slovenia", "capital": "Ljubljana", "language": "Slovene", "demonym": "Slovenian", "government": "Republic", "economy": "Manufacturing"}, {"code": "LT", "name": "Lithuania", "capital": "Vilnius", "language": "Lithuanian", "demonym": "Lithuanian", "government": "Republic", "economy": "Services"}, {"code": "LV", "name": "Latvia", "capital": "Riga", "language": "Latvian", "demonym": "Latvian", "government": "Republic", "economy": "Services"}, {"code": "EE", "name": "Estonia", "capital": "Tallinn", "language": "Estonian", "demonym": "Estonian", "government": "Republic", "economy": "Technology"}, {"code": "BA", "name": "Bosnia and Herzegovina", "capital": "Sarajevo", "language": "Bosnian, Croatian, Serbian", "demonym": "Bosnian", "government": "Federation", "economy": "Industry"}, {"code": "MK", "name": "North Macedonia", "capital": "Skopje", "language": "Macedonian", "demonym": "Macedonian", "government": "Republic", "economy": "Services"}];
+const DATA = [{"code": "US", "name": "United States", "capital": "Washington, D.C.", "language": "English", "demonym": "American", "government": "Federal republic", "economy": "Technology & services"}, {"code": "CA", "name": "Canada", "capital": "Ottawa", "language": "English & French", "demonym": "Canadian", "government": "Constitutional monarchy", "economy": "Energy & services"}, {"code": "MX", "name": "Mexico", "capital": "Mexico City", "language": "Spanish", "demonym": "Mexican", "government": "Federal republic", "economy": "Manufacturing & oil"}, {"code": "GT", "name": "Guatemala", "capital": "Guatemala City", "language": "Spanish", "demonym": "Guatemalan", "government": "Republic", "economy": "Agriculture"}, {"code": "BZ", "name": "Belize", "capital": "Belmopan", "language": "English", "demonym": "Belizean", "government": "Constitutional monarchy", "economy": "Tourism & agriculture"}, {"code": "HN", "name": "Honduras", "capital": "Tegucigalpa", "language": "Spanish", "demonym": "Honduran", "government": "Republic", "economy": "Agriculture"}, {"code": "SV", "name": "El Salvador", "capital": "San Salvador", "language": "Spanish", "demonym": "Salvadoran", "government": "Republic", "economy": "Services"}, {"code": "NI", "name": "Nicaragua", "capital": "Managua", "language": "Spanish", "demonym": "Nicaraguan", "government": "Republic", "economy": "Agriculture"}, {"code": "CR", "name": "Costa Rica", "capital": "San José", "language": "Spanish", "demonym": "Costa Rican", "government": "Republic", "economy": "Services & tourism"}, {"code": "PA", "name": "Panama", "capital": "Panama City", "language": "Spanish", "demonym": "Panamanian", "government": "Republic", "economy": "Canal & services"}, {"code": "CU", "name": "Cuba", "capital": "Havana", "language": "Spanish", "demonym": "Cuban", "government": "One-party state", "economy": "Tourism & services"}, {"code": "DO", "name": "Dominican Republic", "capital": "Santo Domingo", "language": "Spanish", "demonym": "Dominican", "government": "Republic", "economy": "Tourism"}, {"code": "HT", "name": "Haiti", "capital": "Port-au-Prince", "language": "Haitian Creole & French", "demonym": "Haitian", "government": "Republic", "economy": "Agriculture"}, {"code": "JM", "name": "Jamaica", "capital": "Kingston", "language": "English", "demonym": "Jamaican", "government": "Constitutional monarchy", "economy": "Tourism"}, {"code": "BS", "name": "Bahamas", "capital": "Nassau", "language": "English", "demonym": "Bahamian", "government": "Constitutional monarchy", "economy": "Tourism"}, {"code": "BB", "name": "Barbados", "capital": "Bridgetown", "language": "English", "demonym": "Barbadian", "government": "Republic", "economy": "Tourism"}, {"code": "TT", "name": "Trinidad and Tobago", "capital": "Port of Spain", "language": "English", "demonym": "Trinidadian and Tobagonian", "government": "Republic", "economy": "Oil & gas"}, {"code": "CO", "name": "Colombia", "capital": "Bogotá", "language": "Spanish", "demonym": "Colombian", "government": "Republic", "economy": "Oil, coffee"}, {"code": "VE", "name": "Venezuela", "capital": "Caracas", "language": "Spanish", "demonym": "Venezuelan", "government": "Republic", "economy": "Oil"}, {"code": "EC", "name": "Ecuador", "capital": "Quito", "language": "Spanish", "demonym": "Ecuadorian", "government": "Republic", "economy": "Oil & agriculture"}, {"code": "PE", "name": "Peru", "capital": "Lima", "language": "Spanish", "demonym": "Peruvian", "government": "Republic", "economy": "Mining"}, {"code": "BO", "name": "Bolivia", "capital": "Sucre", "language": "Spanish", "demonym": "Bolivian", "government": "Republic", "economy": "Mining & gas"}, {"code": "CL", "name": "Chile", "capital": "Santiago", "language": "Spanish", "demonym": "Chilean", "government": "Republic", "economy": "Mining (copper)"}, {"code": "AR", "name": "Argentina", "capital": "Buenos Aires", "language": "Spanish", "demonym": "Argentine", "government": "Federal republic", "economy": "Agriculture & industry"}, {"code": "UY", "name": "Uruguay", "capital": "Montevideo", "language": "Spanish", "demonym": "Uruguayan", "government": "Republic", "economy": "Services & agriculture"}, {"code": "PY", "name": "Paraguay", "capital": "Asunción", "language": "Spanish & Guaraní", "demonym": "Paraguayan", "government": "Republic", "economy": "Agriculture & hydroelectric"}, {"code": "BR", "name": "Brazil", "capital": "Brasília", "language": "Portuguese", "demonym": "Brazilian", "government": "Federal republic", "economy": "Coffee & soybeans"}, {"code": "GY", "name": "Guyana", "capital": "Georgetown", "language": "English", "demonym": "Guyanese", "government": "Republic", "economy": "Oil & mining"}, {"code": "SR", "name": "Suriname", "capital": "Paramaribo", "language": "Dutch", "demonym": "Surinamese", "government": "Republic", "economy": "Mining"}, {"code": "GB", "name": "United Kingdom", "capital": "London", "language": "English", "demonym": "British", "government": "Constitutional monarchy", "economy": "Doneance & services"}, {"code": "IE", "name": "Ireland", "capital": "Dublin", "language": "English & Irish", "demonym": "Irish", "government": "Republic", "economy": "Technology & services"}, {"code": "FR", "name": "France", "capital": "Paris", "language": "French", "demonym": "French", "government": "Republic", "economy": "Industry & services"}, {"code": "ES", "name": "Spain", "capital": "Madrid", "language": "Spanish", "demonym": "Spanish", "government": "Constitutional monarchy", "economy": "Tourism & services"}, {"code": "PT", "name": "Portugal", "capital": "Lisbon", "language": "Portuguese", "demonym": "Portuguese", "government": "Republic", "economy": "Tourism & services"}, {"code": "DE", "name": "Germany", "capital": "Berlin", "language": "German", "demonym": "German", "government": "Federal republic", "economy": "Manufacturing"}, {"code": "NL", "name": "Netherlands", "capital": "Amsterdam", "language": "Dutch", "demonym": "Dutch", "government": "Constitutional monarchy", "economy": "Trade & services"}, {"code": "BE", "name": "Belgium", "capital": "Brussels", "language": "Dutch, French, German", "demonym": "Belgian", "government": "Federal constitutional monarchy", "economy": "Industry & services"}, {"code": "LU", "name": "Luxembourg", "capital": "Luxembourg", "language": "Luxembourgish, French, German", "demonym": "Luxembourger", "government": "Constitutional monarchy", "economy": "Doneance"}, {"code": "CH", "name": "Switzerland", "capital": "Bern", "language": "German, French, Italian, Romansh", "demonym": "Swiss", "government": "Federal republic", "economy": "Doneance & pharma"}, {"code": "IT", "name": "Italy", "capital": "Rome", "language": "Italian", "demonym": "Italian", "government": "Republic", "economy": "Manufacturing"}, {"code": "AT", "name": "Austria", "capital": "Vienna", "language": "German", "demonym": "Austrian", "government": "Republic", "economy": "Industry & services"}, {"code": "DK", "name": "Denmark", "capital": "Copenhagen", "language": "Danish", "demonym": "Danish", "government": "Constitutional monarchy", "economy": "Services"}, {"code": "SE", "name": "Sweden", "capital": "Stockholm", "language": "Swedish", "demonym": "Swedish", "government": "Constitutional monarchy", "economy": "Manufacturing & tech"}, {"code": "NO", "name": "Norway", "capital": "Oslo", "language": "Norwegian", "demonym": "Norwegian", "government": "Constitutional monarchy", "economy": "Oil & gas"}, {"code": "FI", "name": "Doneland", "capital": "Helsinki", "language": "Donenish & Swedish", "demonym": "Donenish", "government": "Republic", "economy": "Technology"}, {"code": "IS", "name": "Iceland", "capital": "Reykjavík", "language": "Icelandic", "demonym": "Icelandic", "government": "Republic", "economy": "Fishing & tourism"}, {"code": "PL", "name": "Poland", "capital": "Warsaw", "language": "Polish", "demonym": "Polish", "government": "Republic", "economy": "Manufacturing"}, {"code": "CZ", "name": "Czechia", "capital": "Prague", "language": "Czech", "demonym": "Czech", "government": "Republic", "economy": "Manufacturing"}, {"code": "SK", "name": "Slovakia", "capital": "Bratislava", "language": "Slovak", "demonym": "Slovak", "government": "Republic", "economy": "Manufacturing"}, {"code": "HU", "name": "Hungary", "capital": "Budapest", "language": "Hungarian", "demonym": "Hungarian", "government": "Republic", "economy": "Manufacturing"}, {"code": "RO", "name": "Romania", "capital": "Bucharest", "language": "Romanian", "demonym": "Romanian", "government": "Republic", "economy": "Industry"}, {"code": "BG", "name": "Bulgaria", "capital": "Sofia", "language": "Bulgarian", "demonym": "Bulgarian", "government": "Republic", "economy": "Industry"}, {"code": "GR", "name": "Greece", "capital": "Athens", "language": "Greek", "demonym": "Greek", "government": "Republic", "economy": "Tourism & shipping"}, {"code": "HR", "name": "Croatia", "capital": "Zagreb", "language": "Croatian", "demonym": "Croatian", "government": "Republic", "economy": "Tourism"}, {"code": "RS", "name": "Serbia", "capital": "Belgrade", "language": "Serbian", "demonym": "Serbian", "government": "Republic", "economy": "Industry"}, {"code": "UA", "name": "Ukraine", "capital": "Kyiv", "language": "Ukrainian", "demonym": "Ukrainian", "government": "Republic", "economy": "Agriculture"}, {"code": "RU", "name": "Russia", "capital": "Moscow", "language": "Russian", "demonym": "Russian", "government": "Federation", "economy": "Oil & gas"}, {"code": "TR", "name": "Turkey", "capital": "Ankara", "language": "Turkish", "demonym": "Turkish", "government": "Republic", "economy": "Manufacturing"}, {"code": "SA", "name": "Saudi Arabia", "capital": "Riyadh", "language": "Arabic", "demonym": "Saudi", "government": "Absolute monarchy", "economy": "Oil"}, {"code": "AE", "name": "United Arab Emirates", "capital": "Abu Dhabi", "language": "Arabic", "demonym": "Emirati", "government": "Federation", "economy": "Oil & services"}, {"code": "QA", "name": "Qatar", "capital": "Doha", "language": "Arabic", "demonym": "Qatari", "government": "Monarchy", "economy": "Gas"}, {"code": "IL", "name": "Israel", "capital": "Jerusalem", "language": "Hebrew", "demonym": "Israeli", "government": "Parliamentary democracy", "economy": "Technology"}, {"code": "IR", "name": "Iran", "capital": "Tehran", "language": "Persian (Farsi)", "demonym": "Iranian", "government": "Islamic republic", "economy": "Oil & gas"}, {"code": "IQ", "name": "Iraq", "capital": "Baghdad", "language": "Arabic & Kurdish", "demonym": "Iraqi", "government": "Republic", "economy": "Oil"}, {"code": "PK", "name": "Pakistan", "capital": "Islamabad", "language": "Urdu", "demonym": "Pakistani", "government": "Republic", "economy": "Textiles"}, {"code": "IN", "name": "India", "capital": "New Delhi", "language": "Hindi & English", "demonym": "Indian", "government": "Federal republic", "economy": "Services & IT"}, {"code": "BD", "name": "Bangladesh", "capital": "Dhaka", "language": "Bengali", "demonym": "Bangladeshi", "government": "Republic", "economy": "Textiles"}, {"code": "NP", "name": "Nepal", "capital": "Kathmandu", "language": "Nepali", "demonym": "Nepali", "government": "Federal republic", "economy": "Tourism"}, {"code": "LK", "name": "Sri Lanka", "capital": "Sri Jayawardenepura Kotte", "language": "Sinhala & Tamil", "demonym": "Sri Lankan", "government": "Republic", "economy": "Tea"}, {"code": "AF", "name": "Afghanistan", "capital": "Kabul", "language": "Dari & Pashto", "demonym": "Afghan", "government": "Republic", "economy": "Agriculture"}, {"code": "TH", "name": "Thailand", "capital": "Bangkok", "language": "Thai", "demonym": "Thai", "government": "Constitutional monarchy", "economy": "Tourism"}, {"code": "VN", "name": "Vietnam", "capital": "Hanoi", "language": "Vietnamese", "demonym": "Vietnamese", "government": "One-party state", "economy": "Manufacturing"}, {"code": "SG", "name": "Singapore", "capital": "Singapore", "language": "English, Malay, Chinese, Tamil", "demonym": "Singaporean", "government": "Republic", "economy": "Doneance & trade"}, {"code": "MY", "name": "Malaysia", "capital": "Kuala Lumpur", "language": "Malay", "demonym": "Malaysian", "government": "Constitutional monarchy", "economy": "Manufacturing"}, {"code": "ID", "name": "Indonesia", "capital": "Jakarta", "language": "Indonesian", "demonym": "Indonesian", "government": "Republic", "economy": "Manufacturing"}, {"code": "PH", "name": "Philippines", "capital": "Manila", "language": "Filipino & English", "demonym": "Filipino", "government": "Republic", "economy": "Services"}, {"code": "CN", "name": "China", "capital": "Beijing", "language": "Chinese (Mandarin)", "demonym": "Chinese", "government": "One-party state", "economy": "Manufacturing"}, {"code": "JP", "name": "Japan", "capital": "Tokyo", "language": "Japanese", "demonym": "Japanese", "government": "Constitutional monarchy", "economy": "Cars & electronics"}, {"code": "KR", "name": "South Korea", "capital": "Seoul", "language": "Korean", "demonym": "South Korean", "government": "Republic", "economy": "Electronics"}, {"code": "AU", "name": "Australia", "capital": "Canberra", "language": "English", "demonym": "Australian", "government": "Constitutional monarchy", "economy": "Mining"}, {"code": "NZ", "name": "New Zealand", "capital": "Wellington", "language": "English", "demonym": "New Zealander", "government": "Constitutional monarchy", "economy": "Agriculture"}, {"code": "MA", "name": "Morocco", "capital": "Rabat", "language": "Arabic", "demonym": "Moroccan", "government": "Constitutional monarchy", "economy": "Tourism & agriculture"}, {"code": "DZ", "name": "Algeria", "capital": "Algiers", "language": "Arabic", "demonym": "Algerian", "government": "Republic", "economy": "Oil & gas"}, {"code": "TN", "name": "Tunisia", "capital": "Tunis", "language": "Arabic", "demonym": "Tunisian", "government": "Republic", "economy": "Tourism"}, {"code": "EG", "name": "Egypt", "capital": "Cairo", "language": "Arabic", "demonym": "Egyptian", "government": "Republic", "economy": "Tourism & services"}, {"code": "NG", "name": "Nigeria", "capital": "Abuja", "language": "English", "demonym": "Nigerian", "government": "Federal republic", "economy": "Oil"}, {"code": "GH", "name": "Ghana", "capital": "Accra", "language": "English", "demonym": "Ghanaian", "government": "Republic", "economy": "Cocoa & gold"}, {"code": "SN", "name": "Senegal", "capital": "Dakar", "language": "French", "demonym": "Senegalese", "government": "Republic", "economy": "Fishing & services"}, {"code": "ET", "name": "Ethiopia", "capital": "Addis Ababa", "language": "Amharic", "demonym": "Ethiopian", "government": "Federation", "economy": "Agriculture"}, {"code": "KE", "name": "Kenya", "capital": "Nairobi", "language": "Swahili & English", "demonym": "Kenyan", "government": "Republic", "economy": "Agriculture & tourism"}, {"code": "TZ", "name": "Tanzania", "capital": "Dodoma", "language": "Swahili", "demonym": "Tanzanian", "government": "Republic", "economy": "Tourism & agriculture"}, {"code": "UG", "name": "Uganda", "capital": "Kampala", "language": "English & Swahili", "demonym": "Ugandan", "government": "Republic", "economy": "Agriculture"}, {"code": "RW", "name": "Rwanda", "capital": "Kigali", "language": "Kinyarwanda, English, French", "demonym": "Rwandan", "government": "Republic", "economy": "Services"}, {"code": "ZA", "name": "South Africa", "capital": "Pretoria", "language": "English & others", "demonym": "South African", "government": "Republic", "economy": "Mining"}, {"code": "AO", "name": "Angola", "capital": "Luanda", "language": "Portuguese", "demonym": "Angolan", "government": "Republic", "economy": "Oil"}, {"code": "MZ", "name": "Mozambique", "capital": "Maputo", "language": "Portuguese", "demonym": "Mozambican", "government": "Republic", "economy": "Agriculture & gas"}, {"code": "ZW", "name": "Zimbabwe", "capital": "Harare", "language": "English & others", "demonym": "Zimbabwean", "government": "Republic", "economy": "Mining"}, {"code": "ZM", "name": "Zambia", "capital": "Lusaka", "language": "English", "demonym": "Zambian", "government": "Republic", "economy": "Mining (copper)"}, {"code": "MG", "name": "Madagascar", "capital": "Antananarivo", "language": "Malagasy & French", "demonym": "Malagasy", "government": "Republic", "economy": "Agriculture"}, {"code": "NA", "name": "Namibia", "capital": "Windhoek", "language": "English", "demonym": "Namibian", "government": "Republic", "economy": "Mining"}, {"code": "BW", "name": "Botswana", "capital": "Gaborone", "language": "English & Tswana", "demonym": "Motswana", "government": "Republic", "economy": "Mining (diamonds)"}, {"code": "CM", "name": "Cameroon", "capital": "Yaoundé", "language": "French & English", "demonym": "Cameroonian", "government": "Republic", "economy": "Agriculture"}, {"code": "CI", "name": "Côte d’Ivoire", "capital": "Yamoussoukro", "language": "French", "demonym": "Ivorian", "government": "Republic", "economy": "Cocoa"}, {"code": "AL", "name": "Albania", "capital": "Tirana", "language": "Albanian", "demonym": "Albanian", "government": "Republic", "economy": "Services"}, {"code": "SI", "name": "Slovenia", "capital": "Ljubljana", "language": "Slovene", "demonym": "Slovenian", "government": "Republic", "economy": "Manufacturing"}, {"code": "LT", "name": "Lithuania", "capital": "Vilnius", "language": "Lithuanian", "demonym": "Lithuanian", "government": "Republic", "economy": "Services"}, {"code": "LV", "name": "Latvia", "capital": "Riga", "language": "Latvian", "demonym": "Latvian", "government": "Republic", "economy": "Services"}, {"code": "EE", "name": "Estonia", "capital": "Tallinn", "language": "Estonian", "demonym": "Estonian", "government": "Republic", "economy": "Technology"}, {"code": "BA", "name": "Bosnia and Herzegovina", "capital": "Sarajevo", "language": "Bosnian, Croatian, Serbian", "demonym": "Bosnian", "government": "Federation", "economy": "Industry"}, {"code": "MK", "name": "North Macedonia", "capital": "Skopje", "language": "Macedonian", "demonym": "Macedonian", "government": "Republic", "economy": "Services"}];
 
 /* ---------- Settings ---------- */
 let settings = {
-  sound: true,
-  haptics: true
+  sound: true, // SFX
+  haptics: true,
+  music: true
 };
 
 /* ---------- Haptics ---------- */
@@ -309,7 +313,7 @@ function beep(freq=440, duration=0.08, type='sine', gain=0.06) {
 }
 function sfxCorrect() { beep(660,.07,'sine',.06); setTimeout(()=>beep(880,.06,'sine',.05), 70); }
 function sfxWrong() { beep(220,.09,'triangle',.07); }
-function sfxFinish() { beep(523,.08,'sine',.06); setTimeout(()=>beep(659,.08,'sine',.06), 90); setTimeout(()=>beep(784,.10,'sine',.06), 180); }
+function sfxDoneish() { beep(523,.08,'sine',.06); setTimeout(()=>beep(659,.08,'sine',.06), 90); setTimeout(()=>beep(784,.10,'sine',.06), 180); }
 
 /* ---------- UI helpers ---------- */
 const $ = (id)=>document.getElementById(id);
@@ -323,11 +327,11 @@ function toast(msg) {
 
 const TOPICS = [
   {key:'mixed', label:'🎲 Mixed'},
-  {key:'capital', label:'🏛️ Capitales'},
-  {key:'language', label:'🗣️ Idioma'},
-  {key:'demonym', label:'👤 Nacionalidad'},
-  {key:'government', label:'🏛️ Gobierno'},
-  {key:'economy', label:'💼 Economía'},
+  {key:'capital', label:'🏛️ Capitals'},
+  {key:'language', label:'🗣️ Language'},
+  {key:'demonym', label:'👤 Nationality'},
+  {key:'government', label:'🏛️ Government'},
+  {key:'economy', label:'💼 Economy'},
 ];
 
 let selectedTopic = 'mixed';
@@ -366,7 +370,7 @@ let testReview = []; // {prompt, chosen, correct, ok}
 
 function setSubtitle() {
   const map = {classic:'Classic', countdown:'Countdown', flags:'Flags', test:'TEST'};
-  $('subtitle').textContent = 'Modo: ' + (map[mode] || '—');
+  $('subtitle').textContent = 'Mode: ' + (map[mode] || '—');
 }
 
 /* ---------- Flags (emoji) ---------- */
@@ -400,7 +404,7 @@ function buildQuestion(topicKey, country) {
   if (topicKey === 'flags') {
     return {
       type:'flags',
-      prompt:'¿De qué país es esta bandera?',
+      prompt:'Which country does this flag belong to?',
       flag: toFlagEmoji(c.code),
       correct: c.name,
       correctMeta: '',
@@ -410,7 +414,7 @@ function buildQuestion(topicKey, country) {
   if (topicKey === 'capital') {
     return {
       type:'capital',
-      prompt:`¿Cuál es la capital de ${c.name}?`,
+      prompt:`What is the capital of ${c.name}?`,
       correct: c.capital,
       correctMeta: c.name,
       options: buildOptionsField('capital', c.capital, c.code),
@@ -419,7 +423,7 @@ function buildQuestion(topicKey, country) {
   if (topicKey === 'language') {
     return {
       type:'language',
-      prompt:`¿Qué idioma se habla en ${c.name}?`,
+      prompt:`What language is spoken in ${c.name}?`,
       correct: c.language,
       correctMeta: c.name,
       options: buildOptionsField('language', c.language, c.code),
@@ -428,7 +432,7 @@ function buildQuestion(topicKey, country) {
   if (topicKey === 'demonym') {
     return {
       type:'demonym',
-      prompt:`Una persona de ${c.name} es...`,
+      prompt:`A person from ${c.name} is...`,
       correct: c.demonym,
       correctMeta: c.name,
       options: buildOptionsField('demonym', c.demonym, c.code),
@@ -437,7 +441,7 @@ function buildQuestion(topicKey, country) {
   if (topicKey === 'government') {
     return {
       type:'government',
-      prompt:`${c.name} tiene qué tipo de gobierno?`,
+      prompt:`What type of government does ${c.name} have?`,
       correct: c.government,
       correctMeta: c.name,
       options: buildOptionsField('government', c.government, c.code),
@@ -446,7 +450,7 @@ function buildQuestion(topicKey, country) {
   if (topicKey === 'economy') {
     return {
       type:'economy',
-      prompt:`Un ejemplo de la economía de ${c.name} es...`,
+      prompt:`A key part of ${c.name}'s economy is...`,
       correct: c.economy,
       correctMeta: c.name,
       options: buildOptionsField('economy', c.economy, c.code),
@@ -536,7 +540,7 @@ function updateHUD() {
   $('hudStreak').textContent = streak;
   $('hudScore').textContent = score;
   $('hudTime').textContent = (mode==='countdown' ? timeLeft : '—');
-  $('hudTimeLabel').textContent = (mode==='countdown' ? 's' : 'tiempo');
+  $('hudTimeLabel').textContent = (mode==='countdown' ? 's' : 'time');
   $('hudQ').textContent = Math.min(qIndex+1, totalQuestions===9999? (qIndex+1) : totalQuestions);
   $('hudTotal').textContent = (totalQuestions===9999 ? '∞' : totalQuestions);
   const denom = (totalQuestions===9999 ? Math.max(20, qIndex+1) : totalQuestions);
@@ -559,7 +563,7 @@ function startMode(m) {
       $('hudTime').textContent = timeLeft;
       if (timeLeft <= 0) {
         clearInterval(timer);
-        finishRun('Tiempo terminado');
+        finishRun('Time is up');
       }
     }, 1000);
   } else {
@@ -575,14 +579,14 @@ function nextQuestion() {
   used5050ThisQ = false;
   $('feedback').classList.add('hidden');
   $('btnNext').classList.add('hidden');
-  $('btnFinish').classList.add('hidden');
+  $('btnDoneish').classList.add('hidden');
   $('btn5050').disabled = (lifelines<=0);
   $('btnSkip').disabled = false;
 
   topUpQueueIfNeeded();
   currentQuestion = questionQueue[qIndex];
   if (!currentQuestion) {
-    finishRun('Fin');
+    finishRun('Done');
     return;
   }
 
@@ -623,7 +627,7 @@ function chooseAnswer(el, choice) {
     if (mode==='countdown') timeLeft += 2;
     vibrate(20);
     sfxCorrect();
-    $('feedback').innerHTML = `✅ Correcto <span class="muted">${currentQuestion.correctMeta || ''}</span>`;
+    $('feedback').innerHTML = `✅ Correct <span class="muted">${currentQuestion.correctMeta || ''}</span>`;
   } else {
     el.classList.add('wrong');
     [...document.querySelectorAll('.opt')].forEach(o=>{
@@ -634,7 +638,7 @@ function chooseAnswer(el, choice) {
     lives -= 1;
     vibrate([30,40,30]);
     sfxWrong();
-    $('feedback').innerHTML = `❌ Incorrecto. <span class="muted">La respuesta correcta es:</span><br><strong>${correct}</strong>`;
+    $('feedback').innerHTML = `❌ Wrong. <span class="muted">The correct answer is:</span><br><strong>${correct}</strong>`;
   }
 
   $('feedback').classList.remove('hidden');
@@ -652,7 +656,7 @@ function chooseAnswer(el, choice) {
 
   const lastInTest = (mode==='test' && qIndex === totalQuestions-1);
   if (lastInTest || (lives<=0 && mode!=='test')) {
-    $('btnFinish').classList.remove('hidden');
+    $('btnDoneish').classList.remove('hidden');
   } else {
     $('btnNext').classList.remove('hidden');
   }
@@ -674,7 +678,7 @@ function apply5050() {
   used5050ThisQ = true;
   lifelines -= 1;
   vibrate([40]);
-  toast('50/50 usado');
+  toast('50/50 used');
   updateHUD();
   $('btn5050').disabled = (lifelines<=0);
 }
@@ -689,7 +693,7 @@ function skipQuestion() {
     testReview.push({
       prompt: currentQuestion.prompt,
       correct: currentQuestion.correct,
-      chosen: '(sin respuesta)',
+      chosen: '(no answer)',
       ok: false,
       meta: currentQuestion.correctMeta || ''
     });
@@ -697,13 +701,13 @@ function skipQuestion() {
 
   qIndex += 1;
   if (mode==='test' && qIndex>=totalQuestions) {
-    finishRun('TEST terminado');
+    finishRun('TEST finished');
     return;
   }
   nextQuestion();
 }
 
-function finishRun(reason='Fin') {
+function finishRun(reason='Done') {
   clearInterval(timer);
   timer = null;
   show('results');
@@ -711,16 +715,16 @@ function finishRun(reason='Fin') {
   if (mode==='test') {
     const correctN = testReview.filter(x=>x.ok).length;
     const pct = Math.round((correctN / totalQuestions)*100);
-    const grade = pct>=70 ? '✅ APROBADO' : '❌ NO APROBADO';
-    $('resultsSummary').innerHTML = `<strong>${grade}</strong> • ${correctN}/${totalQuestions} correctas • Puntaje: <strong>${score}</strong>`;
+    const grade = pct>=70 ? '✅ PASS' : '❌ FAIL';
+    $('resultsSummary').innerHTML = `<strong>${grade}</strong> • ${correctN}/${totalQuestions} correct • Points: <strong>${score}</strong>`;
     renderReviewList(testReview);
   } else {
-    $('resultsSummary').innerHTML = `${reason} • Puntaje: <strong>${score}</strong>`;
+    $('resultsSummary').innerHTML = `${reason} • Points: <strong>${score}</strong>`;
     $('resultsList').innerHTML = '';
   }
 
   vibrate([80,40,80]);
-  sfxFinish();
+  sfxDoneish();
 }
 
 function renderReviewList(items) {
@@ -734,8 +738,8 @@ function renderReviewList(items) {
         <div style="font-weight:950">${idx+1}. ${it.prompt}</div>
         <div>${it.ok ? '✅' : '❌'}</div>
       </div>
-      <div class="muted" style="margin-top:6px">Tu respuesta: <strong>${it.chosen}</strong></div>
-      <div class="muted">Correcta: <strong>${it.correct}</strong></div>
+      <div class="muted" style="margin-top:6px">Your answer: <strong>${it.chosen}</strong></div>
+      <div class="muted">Correct: <strong>${it.correct}</strong></div>
     `;
     box.appendChild(div);
   });
@@ -761,7 +765,7 @@ document.querySelectorAll('.card[data-mode]').forEach(el=>{
 });
 
 $('btnNext').onclick = ()=>{ qIndex += 1; nextQuestion(); };
-$('btnFinish').onclick = ()=>{ finishRun('Terminado'); };
+$('btnDoneish').onclick = ()=>{ finishRun('Finished'); };
 $('btn5050').onclick = apply5050;
 $('btnSkip').onclick = skipQuestion;
 
@@ -777,7 +781,7 @@ const counts = [10, 20, 30, 40, 50];
 counts.forEach(n=>{
   const p = document.createElement('div');
   p.className = 'pill' + (n===testCount ? ' active':'');
-  p.textContent = `${n} preguntas`;
+  p.textContent = `${n} questions`;
   p.onclick = ()=>{
     testCount = n;
     [...$('testCounts').children].forEach(ch=>ch.classList.remove('active'));
@@ -787,7 +791,7 @@ counts.forEach(n=>{
 });
 $('testIncludeFlags').onclick = ()=>{
   testIncludeFlags = !testIncludeFlags;
-  $('testIncludeFlags').textContent = `🚩 Incluir banderas: ${testIncludeFlags ? 'SÍ':'NO'}`;
+  $('testIncludeFlags').textContent = `🚩 Incluir flags: ${testIncludeFlags ? 'SÍ':'NO'}`;
 };
 $('startTestBtn').onclick = ()=>{
   mode = 'test';
@@ -799,17 +803,32 @@ $('startTestBtn').onclick = ()=>{
   nextQuestion();
 };
 
+
+
 /* Settings toggles */
 $('toggleSound').onclick = ()=>{
   settings.sound = !settings.sound;
-  $('toggleSound').textContent = settings.sound ? '🔊 Sonido: ON' : '🔇 Sonido: OFF';
-  toast(settings.sound ? 'Sonido activado' : 'Sonido desactivado');
+  $('toggleSound').textContent = settings.sound ? '🔊 SFX: ON' : '🔇 SFX: OFF';
+  toast(settings.sound ? 'SFX enabled' : 'SFX disabled');
 };
 $('toggleHaptics').onclick = ()=>{
   settings.haptics = !settings.haptics;
-  $('toggleHaptics').textContent = settings.haptics ? '📳 Haptic: ON' : '📴 Haptic: OFF';
-  toast(settings.haptics ? 'Haptic activado' : 'Haptic desactivado');
+  $('toggleHaptics').textContent = settings.haptics ? '📳 Haptics: ON' : '📴 Haptics: OFF';
+  toast(settings.haptics ? 'Haptics enabled' : 'Haptics disabled');
 };
+
+
+/* Always-on music toggle (top HUD) */
+document.addEventListener('DOMContentLoaded', () => {
+  const chip = document.getElementById('musicChip');
+  if (!chip) return;
+  chip.addEventListener('click', () => {
+    settings.music = !settings.music;
+    syncMusicUI();
+    toast(settings.music ? 'Music ON' : 'Music OFF');
+    vibrate(15);
+  });
+});
 
 /* Init */
 setSubtitle();
@@ -818,4 +837,3 @@ show('menu');
 </script>
 </body>
 </html>
-
